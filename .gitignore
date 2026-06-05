@@ -1,0 +1,52 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build outputs
+dist/
+build/
+out/
+
+# Environment variables (VERY IMPORTANT)
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Logs
+logs/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# VS Code settings (optional but recommended)
+.vscode/
+!.vscode/extensions.json
+
+# Kimchi / AI tool caches (important for you)
+.kimchi/
+*.kimchi-cache
+.local/share/kimchi/
+
+# WSL / Linux junk
+*.swp
+*.swo
+
+# Coverage reports (if testing)
+coverage/
+
+# Temporary files
+tmp/
+temp/
+
+# TypeScript (if used)
+*.tsbuildinfo
+
+# Optional: API keys / secrets
+secrets.json
