@@ -36,8 +36,8 @@ export default function Navbar() {
               <GraduationCap size={20} className="text-white" />
             </div>
             <div>
-              <span className="font-display font-bold text-lg text-gray-900">Skylent</span>
-              <span className="font-display font-bold text-lg text-brand-500">Global</span>
+              <span className="font-display font-bold text-lg text-white">Skylent</span>
+              <span className="font-display font-bold text-lg text-white">Global</span>
               <div className="text-[9px] text-gray-400 font-medium -mt-1 leading-tight">BUILD SKILLS. BUILD CAREERS.</div>
             </div>
           </Link>
@@ -78,21 +78,21 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {menuOpen && (
-        <div className="lg:hidden bg-white border-t border-gray-100 shadow-xl animate-fade-in">
+        <div className="lg:hidden bg-brand-600 border-t border-brand-500 shadow-xl animate-fade-in">
           <div className="px-4 py-4 space-y-1">
             {navLinks.map(link => (
               <Link
                 key={link.path}
                 to={link.path}
                 className={`block px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                  location.pathname === link.path ? 'text-white bg-brand-600 shadow-sm' : location.pathname === '/' ? 'text-white hover:text-brand-400' : 'text-brand-600 hover:text-brand-800'
+                  location.pathname === link.path ? 'text-white bg-brand-700 shadow-sm' : 'text-white hover:text-brand-200'
                 }`}
               >
                 {link.label}
               </Link>
             ))}
-            <div className="pt-3 pb-1 border-t border-gray-100 space-y-2">
-              <a href="https://skylent-global-demo.vercel.app/admin" className="block w-full text-center border border-gray-200 text-gray-900 hover:text-brand-600 py-2.5 rounded-xl text-sm font-medium transition-all">Log In</a>
+            <div className="pt-3 pb-1 border-t border-white/20 space-y-2">
+              <a href="https://skylent-global-demo.vercel.app/admin" className="block w-full text-center border border-white/30 text-white hover:bg-white/10 py-2.5 rounded-xl text-sm font-medium transition-all">Log In</a>
               <a href="https://skylent-global-demo.vercel.app/admin" className="block w-full text-center bg-brand-500 text-white py-2.5 rounded-xl text-sm font-semibold">Get Started Free</a>
             </div>
           </div>
