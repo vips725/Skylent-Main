@@ -66,6 +66,15 @@ export default function Home() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 grid lg:grid-cols-2 gap-16 items-center">
           {/* Left */}
           <div className="animate-slide-up">
+            <div className="flex items-center gap-2.5 mb-5">
+              <div className="w-10 h-10 bg-gradient-to-br from-brand-500 to-brand-700 rounded-xl flex items-center justify-center shadow-lg">
+                <GraduationCap size={22} className="text-white" />
+              </div>
+              <div>
+                <span className="font-display font-bold text-xl text-white">Skylent</span>
+                <span className="font-display font-bold text-xl text-brand-400">Global</span>
+              </div>
+            </div>
             <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2 text-sm text-white/90 mb-6">
               <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
               <span>🎉 500+ Students Placed in Top Companies</span>
@@ -317,7 +326,7 @@ export default function Home() {
             Join 500+ students who have transformed their careers. Applications are open now.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <a href="https://skylent-global-demo.vercel.app/signup" target="_blank" rel="noopener noreferrer" className="btn-accent text-base px-8 py-4 flex items-center gap-2">
+            <a href="https://skylent-global-demo.vercel.app/admin" target="_blank" rel="noopener noreferrer" className="btn-accent text-base px-8 py-4 flex items-center gap-2">
               Apply Now — It's Free <ArrowRight size={18} />
             </a>
             <Link to="/contact" className="bg-white/10 hover:bg-white/20 border border-white/30 text-white font-semibold px-8 py-4 rounded-xl transition-all text-base">

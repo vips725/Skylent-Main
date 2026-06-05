@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
@@ -11,13 +12,16 @@ import { MBAPage, CertificationsPage, PlacementsPage, AboutPage, ContactPage } f
 const noLayoutRoutes = ['/login', '/signup'];
 
 function Layout() {
+
   const location = useLocation();
+
+  useEffect(() => { window.scrollTo({ top: 0, behavior: "smooth" }); }, [location.pathname]);
   const hideLayout = noLayoutRoutes.some(r => location.pathname.startsWith(r));
 
   return (
     <>
       {!hideLayout && <Navbar />}
-      <main>
+      <main className="animate-fade-in" key={location.pathname}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/courses" element={<Courses />} />

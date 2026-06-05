@@ -167,7 +167,7 @@ export function AboutPage() {
         <div className="bg-gray-950 rounded-3xl p-10 text-center text-white">
           <h2 className="font-display text-3xl font-bold mb-4">Ready to Join Skylent?</h2>
           <p className="text-gray-400 mb-6">Take the first step toward your dream career today.</p>
-          <Link to="/signup" className="btn-accent inline-flex items-center gap-2">Get Started Free <ArrowRight size={16} /></Link>
+          <a href="https://skylent-global-demo.vercel.app/admin" target="_blank" rel="noopener noreferrer" className="btn-accent inline-flex items-center gap-2">Get Started Free <ArrowRight size={16} /></a>
         </div>
       </div>
     </div>
