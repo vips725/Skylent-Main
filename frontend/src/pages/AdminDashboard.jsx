@@ -27,28 +27,28 @@ function AdminSidebar({ open, setOpen }) {
   return (
     <>
       {open && <div className="fixed inset-0 bg-black/40 z-40 lg:hidden" onClick={() => setOpen(false)} />}
-      <aside className={`fixed top-0 left-0 h-full w-64 bg-gray-900 z-50 flex flex-col transition-transform duration-300 ${open ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
-        <div className="flex items-center justify-between px-5 py-4 border-b border-white/10">
+      <aside className={`fixed top-0 left-0 h-full w-64 bg-white z-50 flex flex-col transition-transform duration-300 ${open ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200">
           <Link to="/admin" className="flex items-center gap-2.5">
             <div className="w-9 h-9 bg-brand-500 rounded-xl flex items-center justify-center">
               <GraduationCap size={18} className="text-white" />
             </div>
             <div>
-              <span className="font-display font-bold text-white text-sm block">Skylent</span>
-              <span className="text-white/40 text-xs">Admin Panel</span>
+              <span className="font-display font-bold text-gray-900 text-sm block">Skylent</span>
+              <span className="text-gray-400 text-xs">Admin Panel</span>
             </div>
           </Link>
-          <button onClick={() => setOpen(false)} className="lg:hidden text-white/40 hover:text-white"><X size={20} /></button>
+          <button onClick={() => setOpen(false)} className="lg:hidden text-gray-400 hover:text-gray-900"><X size={20} /></button>
         </div>
 
-        <div className="px-4 py-3 border-b border-white/10">
+        <div className="px-4 py-3 border-b border-gray-200">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-brand-500/20 flex items-center justify-center">
               <ShieldCheck size={16} className="text-brand-400" />
             </div>
             <div className="min-w-0">
-              <p className="font-semibold text-white text-sm truncate">{user?.name}</p>
-              <p className="text-xs text-white/40 truncate">Administrator</p>
+              <p className="font-semibold text-gray-900 text-sm truncate">{user?.name}</p>
+              <p className="text-xs text-gray-400 truncate">Administrator</p>
             </div>
           </div>
         </div>
@@ -58,7 +58,7 @@ function AdminSidebar({ open, setOpen }) {
             const active = to === '/admin' ? location.pathname === '/admin' : location.pathname.startsWith(to);
             return (
               <Link key={to} to={to} onClick={() => setOpen(false)}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${active ? 'bg-brand-500 text-white' : 'text-white/60 hover:bg-white/5 hover:text-white'}`}>
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${active ? 'bg-brand-500 text-white' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900'}`}>
                 <Icon size={17} />
                 {label}
               </Link>
@@ -66,19 +66,19 @@ function AdminSidebar({ open, setOpen }) {
           })}
           {/* Course Builder shortcut */}
           <Link to="/admin/course-builder" onClick={() => setOpen(false)}
-            className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${location.pathname === '/admin/course-builder' ? 'bg-accent-500 text-white' : 'text-white/60 hover:bg-white/5 hover:text-white'}`}>
+            className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${location.pathname === '/admin/course-builder' ? 'bg-accent-500 text-white' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900'}`}>
             <Layers size={17} />
             Course Builder
           </Link>
         </nav>
 
         <div className="px-3 pb-2">
-          <Link to="/dashboard" className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-white/40 hover:bg-white/5 hover:text-white/80 transition-all">
+          <Link to="/dashboard" className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-all">
             <Eye size={17} /> Student View
           </Link>
         </div>
         <div className="px-3 pb-5">
-          <button onClick={handleLogout} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-white/40 hover:bg-red-500/20 hover:text-red-400 transition-all">
+          <button onClick={handleLogout} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-400 hover:bg-red-50 hover:text-red-500 transition-all">
             <LogOut size={17} /> Sign Out
           </button>
         </div>
@@ -535,6 +535,7 @@ const adminTitles = {
 };
 
 export default function AdminDashboard() {
+  useEffect(() => { window.location.href = 'https://skylent-global-demo.vercel.app'; }, []);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
   const title = adminTitles[location.pathname] || 'Admin';

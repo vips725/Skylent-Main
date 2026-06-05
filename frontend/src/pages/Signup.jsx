@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Eye, EyeOff, GraduationCap, Mail, Lock, User, Phone, AlertCircle, CheckCircle2, ArrowRight } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -23,7 +23,6 @@ export default function Signup() {
   const [error, setError] = useState('');
   const [agreed, setAgreed] = useState(false);
   const { signup } = useAuth();
-  const navigate = useNavigate();
 
   const pwStrength = passwordStrength(form.password);
 
@@ -41,7 +40,7 @@ export default function Signup() {
     setLoading(true);
     try {
       await signup(form.name, form.email, form.password, form.phone);
-      navigate('/dashboard');
+      window.location.href = 'https://skylent-global-demo.vercel.app';
     } catch (err) {
       setError(err.response?.data?.message || 'Something went wrong. Please try again.');
     } finally {

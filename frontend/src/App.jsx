@@ -2,19 +2,13 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import ProtectedRoute from './components/ProtectedRoute';
-import AdminRoute from './components/AdminRoute';
 
 import Home from './pages/Home';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
 import Courses from './pages/Courses';
 import CoursePreview from './pages/CoursePreview';
-import Dashboard from './pages/Dashboard';
-import AdminDashboard from './pages/AdminDashboard';
 import { MBAPage, CertificationsPage, PlacementsPage, AboutPage, ContactPage } from './pages/OtherPages';
 
-const noLayoutRoutes = ['/login', '/signup', '/dashboard', '/admin'];
+const noLayoutRoutes = ['/login', '/signup'];
 
 function Layout() {
   const location = useLocation();
@@ -26,8 +20,6 @@ function Layout() {
       <main>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
           <Route path="/courses" element={<Courses />} />
           <Route path="/courses/:id" element={<CoursePreview />} />
           <Route path="/mba" element={<MBAPage />} />
@@ -35,8 +27,6 @@ function Layout() {
           <Route path="/placements" element={<PlacementsPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
-          <Route path="/dashboard/*" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path="/admin/*" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
           <Route path="*" element={
             <div className="min-h-screen flex items-center justify-center">
               <div className="text-center">

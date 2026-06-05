@@ -143,8 +143,6 @@ app.delete('/api/admin/users/:id', authenticateToken, requireAdmin, (req, res) =
 // ─── Health ───────────────────────────────────────────────────────────────────
 app.get('/api/health', (req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString() }));
 
-app.listen(PORT, () => console.log(`✅ Skylent API running on http://localhost:${PORT}\n   Admin: admin@skylent.com / admin123`));
-
 // ─── Delete course ────────────────────────────────────────────────────────────
 app.delete('/api/admin/courses/:id', authenticateToken, requireAdmin, (req, res) => {
   const idx = courses.findIndex(c => c.id === req.params.id);
@@ -161,3 +159,6 @@ app.put('/api/admin/courses/:id', authenticateToken, requireAdmin, (req, res) =>
   courses[idx] = { ...courses[idx], ...fields, curriculum: curriculum || courses[idx].curriculum };
   res.json({ message: 'Course updated', course: courses[idx] });
 });
+
+// ─── Start server ─────────────────────────────────────────────────────────────
+app.listen(PORT, () => console.log(`✅ Skylent API running on http://localhost:${PORT}\n   Admin: admin@skylent.com / admin123`));

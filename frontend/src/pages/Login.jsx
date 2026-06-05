@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Eye, EyeOff, GraduationCap, Mail, Lock, AlertCircle, ArrowRight, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -9,9 +9,6 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const { login } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const from = location.state?.from?.pathname || null;
 
   const handleChange = e => { setForm(f => ({ ...f, [e.target.name]: e.target.value })); if (error) setError(''); };
 
@@ -20,9 +17,8 @@ export default function Login() {
     if (!form.email || !form.password) { setError('Please fill in all fields'); return; }
     setLoading(true);
     try {
-      const data = await login(form.email, form.password);
-      if (from) { navigate(from, { replace: true }); return; }
-      navigate(data.user.role === 'admin' ? '/admin' : '/dashboard', { replace: true });
+      await login(form.email, form.password);
+      window.location.href = 'https://skylent-global-demo.vercel.app';
     } catch (err) {
       setError(err.response?.data?.message || 'Invalid credentials. Please try again.');
     } finally { setLoading(false); }

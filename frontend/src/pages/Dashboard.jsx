@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, BookOpen, Award, TrendingUp, Calendar, MessageSquare,
@@ -689,6 +689,7 @@ const pageTitles = {
 };
 
 export default function Dashboard() {
+  useEffect(() => { window.location.href = 'https://skylent-global-demo.vercel.app'; }, []);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
   const title = pageTitles[location.pathname] || 'Dashboard';

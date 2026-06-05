@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   ArrowRight, Play, Star, Users, TrendingUp, Award, CheckCircle2,
-  BookOpen, Briefcase, Globe, ChevronRight, Quote, GraduationCap,
-  BarChart3, Zap, Shield, Target
+  ChevronRight, Quote, GraduationCap,
+  BarChart3, Zap, Shield, Target, Briefcase
 } from 'lucide-react';
 import axios from 'axios';
 import CourseCard from '../components/CourseCard';
@@ -317,9 +317,9 @@ export default function Home() {
             Join 500+ students who have transformed their careers. Applications are open now.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Link to="/signup" className="btn-accent text-base px-8 py-4 flex items-center gap-2">
+            <a href="https://skylent-global-demo.vercel.app/signup" target="_blank" rel="noopener noreferrer" className="btn-accent text-base px-8 py-4 flex items-center gap-2">
               Apply Now — It's Free <ArrowRight size={18} />
-            </Link>
+            </a>
             <Link to="/contact" className="bg-white/10 hover:bg-white/20 border border-white/30 text-white font-semibold px-8 py-4 rounded-xl transition-all text-base">
               Talk to Counsellor
             </Link>
