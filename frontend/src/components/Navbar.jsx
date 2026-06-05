@@ -50,8 +50,8 @@ export default function Navbar() {
                 to={link.path}
                 className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                   location.pathname === link.path
-                    ? 'text-brand-600 bg-brand-50'
-                    : 'text-gray-900 hover:text-brand-600 hover:bg-gray-50'
+                    ? 'text-white bg-brand-600 shadow-sm'
+                    : location.pathname === '/' ? 'text-white hover:text-brand-400' : 'text-brand-600 hover:text-brand-800'
                 }`}
               >
                 {link.label}
@@ -61,7 +61,7 @@ export default function Navbar() {
 
           {/* Auth Buttons */}
           <div className="hidden lg:flex items-center gap-3">
-            <a href="https://skylent-global-demo.vercel.app/admin" className="text-sm font-medium text-gray-900 hover:text-brand-600 px-4 py-2 rounded-lg hover:bg-gray-50 transition-all">
+            <a href="https://skylent-global-demo.vercel.app/admin" className="text-sm font-medium text-white bg-accent-500 shadow-lg px-4 py-2 rounded-lg transition-all duration-200 hover:bg-accent-600 hover:scale-110">
               Log In
             </a>
             <a href="https://skylent-global-demo.vercel.app/admin" className="btn-primary text-sm py-2.5 px-5">
@@ -85,14 +85,14 @@ export default function Navbar() {
                 key={link.path}
                 to={link.path}
                 className={`block px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                  location.pathname === link.path ? 'text-brand-600 bg-brand-50' : 'text-gray-900 hover:text-brand-600 hover:bg-gray-50'
+                  location.pathname === link.path ? 'text-white bg-brand-600 shadow-sm' : location.pathname === '/' ? 'text-white hover:text-brand-400' : 'text-brand-600 hover:text-brand-800'
                 }`}
               >
                 {link.label}
               </Link>
             ))}
             <div className="pt-3 pb-1 border-t border-gray-100 space-y-2">
-              <a href="https://skylent-global-demo.vercel.app/admin" className="block w-full text-center border border-gray-200 text-gray-700 py-2.5 rounded-xl text-sm font-medium">Log In</a>
+              <a href="https://skylent-global-demo.vercel.app/admin" className="block w-full text-center border border-gray-200 text-gray-900 hover:text-brand-600 py-2.5 rounded-xl text-sm font-medium transition-all">Log In</a>
               <a href="https://skylent-global-demo.vercel.app/admin" className="block w-full text-center bg-brand-500 text-white py-2.5 rounded-xl text-sm font-semibold">Get Started Free</a>
             </div>
           </div>
