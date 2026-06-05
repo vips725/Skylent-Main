@@ -26,7 +26,7 @@ export default function Navbar() {
   useEffect(() => { setMenuOpen(false); }, [location]);
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-brand-600/95 backdrop-blur-md shadow-sm border-b border-brand-500' : 'bg-transparent'}`}>
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-brand-600/95 backdrop-blur-md shadow-sm border-b border-brand-500' : 'bg-brand-600'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 lg:h-20">
 
@@ -36,9 +36,9 @@ export default function Navbar() {
               <GraduationCap size={20} className="text-white" />
             </div>
             <div>
-              <span className="font-display font-bold text-lg text-white">Skylent</span>
+              <span className="font-display font-bold text-lg text-black">Skylent</span>
               <span className="font-display font-bold text-lg text-white">Global</span>
-              <div className="text-[9px] text-gray-400 font-medium -mt-1 leading-tight">BUILD SKILLS. BUILD CAREERS.</div>
+              <div className="text-[9px] text-white/70 font-medium -mt-1 leading-tight">BUILD SKILLS. BUILD CAREERS.</div>
             </div>
           </Link>
 
@@ -50,8 +50,8 @@ export default function Navbar() {
                 to={link.path}
                 className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                   location.pathname === link.path
-                    ? 'text-white bg-brand-600 shadow-sm'
-                    : location.pathname === '/' ? 'text-white hover:text-brand-400' : 'text-brand-600 hover:text-brand-800'
+                    ? 'text-white bg-brand-700 shadow-sm'
+                    : 'text-white hover:text-brand-200'
                 }`}
               >
                 {link.label}
@@ -70,7 +70,7 @@ export default function Navbar() {
           </div>
 
           {/* Mobile Menu Button */}
-          <button onClick={() => setMenuOpen(!menuOpen)} className="lg:hidden p-2 rounded-lg hover:bg-gray-100">
+          <button onClick={() => setMenuOpen(!menuOpen)} className="lg:hidden p-2 rounded-lg text-white hover:bg-white/10">
             {menuOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
         </div>
