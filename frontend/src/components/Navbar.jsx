@@ -58,7 +58,7 @@ export default function Navbar() {
               <LogIn size={14} /> Log In
             </Link>
             <Link to="/signup" className="btn-primary text-sm py-2 px-5 rounded-full flex items-center gap-2 bg-gradient-to-r from-brand-500 via-sky-500 to-blue-500 hover:from-brand-600 hover:via-sky-600 hover:to-blue-600 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all">
-              <Sparkles size={14} /> Get Started Free
+              <Sparkles size={14} /> Request Access
             </Link>
           </div>
 
@@ -91,7 +91,7 @@ export default function Navbar() {
                 <LogIn size={14} /> Log In
               </Link>
               <Link to="/signup" className="flex items-center justify-center gap-2 w-full btn-primary py-2.5 rounded-full text-sm font-semibold bg-gradient-to-r from-brand-500 via-sky-500 to-blue-500 hover:from-brand-600 hover:via-sky-600 hover:to-blue-600">
-                <Sparkles size={14} /> Get Started Free
+                <Sparkles size={14} /> Request Access
               </Link>
             </div>
           </div>

@@ -2,17 +2,32 @@ const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = require('../config/constants');
 
 const authenticateToken = (req, res, next) => {
-  const token = (req.headers['authorization'] || '').split(' ')[1];
-  if (!token) return res.status(401).json({ message: 'Access token required' });
-  jwt.verify(token, JWT_SECRET, (err, user) => {
-    if (err) return res.status(403).json({ message: 'Invalid or expired token' });
-    req.user = user;
-    next();
-  });
+  const authHeader = req.headers.authorization || '';
+  const token = authHeader.startsWith('Bearer ')
+    ? authHeader.slice('Bearer '.length)
+    : null;
+
+  if (!token) {
+    return res.status(401).json({ success: false, message: 'Access token required' });
+  }
+
+  try {
+    const payload = jwt.verify(token, JWT_SECRET);
+    req.user = {
+      ...payload,
+      id: payload.sub,
+    };
+    return next();
+  } catch (err) {
+    return res.status(403).json({ success: false, message: 'Invalid or expired token' });
+  }
 };
 
 const requireAdmin = (req, res, next) => {
-  if (req.user.role !== 'admin') return res.status(403).json({ message: 'Admin access required' });
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ success: false, message: 'Admin access required' });
+  }
+
   next();
 };
 

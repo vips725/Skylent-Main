@@ -3,83 +3,82 @@ import axios from 'axios';
 
 const AuthContext = createContext(null);
 const API_BASE = '/api';
+const TOKEN_KEY = 'skylent_token';
 
-function decodeJwt(token) {
-  try {
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const json = atob(base64);
-    return JSON.parse(json);
-  } catch {
-    return null;
-  }
+function normalizeUser(user) {
+  if (!user) return null;
+
+  return {
+    id: user.id,
+    name: user.name || user.username,
+    username: user.username,
+    role: user.role,
+  };
 }
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(() => localStorage.getItem('skylent_token'));
+  const [token, setToken] = useState(() => localStorage.getItem(TOKEN_KEY));
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (token) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      fetchMe();
-    } else {
-      setLoading(false);
-    }
-  }, [token]);
-
-  const fetchMe = async () => {
-    if (!token) {
-      setLoading(false);
-      return;
-    }
-    try {
-      const payload = decodeJwt(token);
-      if (!payload) {
-        logout();
+    const hydrateUser = async () => {
+      if (!token) {
+        delete axios.defaults.headers.common['Authorization'];
+        setUser(null);
+        setLoading(false);
         return;
       }
-      const user = {
-        id: payload.sub,
-        name: payload.username,
-        username: payload.username,
-        role: payload.role,
-      };
-      setUser(user);
-    } catch {
-      logout();
-    } finally {
-      setLoading(false);
-    }
-  };
+
+      setLoading(true);
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+      try {
+        const { data } = await axios.get(`${API_BASE}/auth/me`);
+        setUser(normalizeUser(data.user));
+      } catch {
+        localStorage.removeItem(TOKEN_KEY);
+        delete axios.defaults.headers.common['Authorization'];
+        setToken(null);
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    hydrateUser();
+  }, [token]);
 
   const login = async (email, password) => {
     const { data } = await axios.post(`${API_BASE}/auth/login`, { username: email, password });
-    localStorage.setItem('skylent_token', data.token);
+
+    if (!data?.token || !data?.user) {
+      throw new Error('Invalid login response');
+    }
+
+    localStorage.setItem(TOKEN_KEY, data.token);
     axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
     setToken(data.token);
-
-    const payload = decodeJwt(data.token);
-    const user = {
-      id: payload.sub,
-      name: payload.username,
-      username: payload.username,
-      role: payload.role,
-    };
-    setUser(user);
-    return user;
+    setUser(normalizeUser(data.user));
+    return normalizeUser(data.user);
   };
 
-  const signup = async (name, email, password, phone, role = 'student') => {
-    throw new Error('Sign-up is temporarily unavailable. Please use the demo login account.');
+  const signup = async () => {
+    throw new Error('Sign-up is currently unavailable. Please contact Skylent Global for account access.');
   };
 
-  const logout = () => {
-    localStorage.removeItem('skylent_token');
-    delete axios.defaults.headers.common['Authorization'];
-    setToken(null);
-    setUser(null);
+  const logout = async () => {
+    try {
+      await axios.post(`${API_BASE}/auth/logout`);
+    } catch {
+      // Client-side logout should still complete if the network request fails.
+    } finally {
+      localStorage.removeItem(TOKEN_KEY);
+      delete axios.defaults.headers.common['Authorization'];
+      setToken(null);
+      setUser(null);
+      setLoading(false);
+    }
   };
 
   const isAdmin = user?.role === 'admin';

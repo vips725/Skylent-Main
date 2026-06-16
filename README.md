@@ -11,7 +11,7 @@ A complete full-stack web application for Skylent Global's edtech platform, with
 ```
 skylent/
 ├── backend/          # Node.js + Express API
-│   ├── server.js     # Main server with all routes
+│   ├── src/server.js # Main server with all routes
 │   ├── .env          # Environment variables
 │   └── package.json
 │
@@ -27,7 +27,7 @@ skylent/
     │   ├── pages/
     │   │   ├── Home.jsx          # Full landing page
     │   │   ├── Login.jsx         # Login with validation
-    │   │   ├── Signup.jsx        # Signup with password strength
+    │   │   ├── Signup.jsx        # Account access request page
     │   │   ├── Courses.jsx       # Course listing with filters
     │   │   ├── Dashboard.jsx     # Protected student dashboard
     │   │   └── OtherPages.jsx    # MBA, Certs, Placements, About, Contact
@@ -46,8 +46,8 @@ skylent/
 ```bash
 cd backend
 npm install
-node server.js
-# API running at http://localhost:5000
+npm run dev
+# API running at http://localhost:5001
 ```
 
 ### 2. Frontend Setup
@@ -65,7 +65,6 @@ npm run dev
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| POST | `/api/auth/signup` | Register new user |
 | POST | `/api/auth/login` | Login, returns JWT |
 | GET | `/api/auth/me` | Get current user (requires token) |
 | POST | `/api/auth/logout` | Logout (clears client token) |
@@ -74,23 +73,15 @@ npm run dev
 
 ### Sample Requests
 
-**Signup:**
-```json
-POST /api/auth/signup
-{
-  "name": "Arjun Mehta",
-  "email": "arjun@example.com",
-  "password": "mypassword123",
-  "phone": "+91 98765 43210"
-}
-```
+Self-service signup is currently unavailable. New accounts are created by the
+Skylent Global team.
 
 **Login:**
 ```json
 POST /api/auth/login
 {
-  "email": "arjun@example.com",
-  "password": "mypassword123"
+  "username": "satvik",
+  "password": "password123"
 }
 ```
 
@@ -114,7 +105,8 @@ Authorization: Bearer <your_jwt_token>
 | Contact | `/contact` | No |
 | Login | `/login` | No |
 | Signup | `/signup` | No |
-| Dashboard | `/dashboard` | ✅ Yes |
+| Admin Dashboard | `/admin/dashboard` | ✅ Yes |
+| Student Dashboard | `/student/dashboard` | ✅ Yes |
 
 ---
 
@@ -133,34 +125,37 @@ Authorization: Bearer <your_jwt_token>
 - bcryptjs (password hashing)
 - jsonwebtoken (JWT auth)
 - cors
+- pg + Neon Postgres
+- zod validation
+
+---
+
+## Environment
+
+Create `backend/.env` from `backend/.env.example`:
+
+```text
+PORT=5001
+HOST=127.0.0.1
+DATABASE_URL=your-neon-postgres-connection-string
+JWT_SECRET=use-a-long-random-production-secret
+JWT_EXPIRES_IN=1h
+DEMO_ADMIN_USERNAME=satvik
+DEMO_ADMIN_PASSWORD=password123
+CORS_ORIGINS=http://localhost:3000
+```
+
+For Vercel, add the same variables in Project Settings > Environment Variables,
+except `PORT`. Vercel manages ports automatically.
 
 ---
 
 ## 🔒 Production Recommendations
 
-1. **Replace in-memory store** with MongoDB or PostgreSQL
-2. **Change JWT_SECRET** to a strong random string in `.env`
-3. **Add rate limiting** with `express-rate-limit`
-4. **Add email verification** with Nodemailer
-5. **Deploy backend** to Railway/Render/Vercel
-6. **Deploy frontend** to Vercel/Netlify
-
-### MongoDB Example (users collection):
-```js
-// Install: npm install mongoose
-const mongoose = require('mongoose');
-mongoose.connect(process.env.MONGO_URI);
-
-const UserSchema = new mongoose.Schema({
-  name: String,
-  email: { type: String, unique: true },
-  password: String,
-  phone: String,
-  enrolledCourses: [String],
-  role: { type: String, default: 'student' },
-  createdAt: { type: Date, default: Date.now }
-});
-```
+1. **Change JWT_SECRET** to a strong random string in `.env`
+2. **Add rate limiting** with `express-rate-limit`
+3. **Add email verification** before enabling signup
+4. **Move mock course/admin data** to Postgres when those workflows need persistence
 
 ---
 

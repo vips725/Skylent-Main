@@ -1,9 +1,24 @@
 const { Pool } = require('pg');
 
+const env = require('../config/constants');
+
+function buildConnectionString() {
+  const databaseUrl = new URL(env.DATABASE_URL);
+
+  databaseUrl.searchParams.delete('channel_binding');
+  databaseUrl.searchParams.set('sslmode', 'verify-full');
+
+  return databaseUrl.toString();
+}
+
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  // Let the connection string handle SSL settings automatically.
-  // If your Neon password has @ # ? & + / \ = :  etc, paste the URL exactly as Neon gives it.
+  connectionString: buildConnectionString(),
+  max: 5,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 10000,
+  ssl: {
+    rejectUnauthorized: true,
+  },
 });
 
 // Log connection errors for easier debugging

@@ -477,13 +477,13 @@ export default function Home() {
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link to="/signup" className="bg-gradient-to-r from-blue-500 to-sky-500 hover:from-blue-600 hover:to-sky-600 text-white font-semibold px-8 py-4 rounded-xl flex items-center gap-2 shadow-lg shadow-blue-500/25 transition-all text-base">
-              Apply Now — It's Free <ArrowRight size={18} />
+              Request Access <ArrowRight size={18} />
             </Link>
             <Link to="/support" className="bg-transparent hover:bg-white/10 border-2 border-white/30 text-white font-semibold px-8 py-4 rounded-xl transition-all text-base">
               Talk to Counsellor
             </Link>
           </div>
-          <p className="text-gray-500 text-sm mt-6">No credit card required • Free career consultation included</p>
+          <p className="text-gray-500 text-sm mt-6">Applications are reviewed by the Skylent Global team</p>
         </div>
       </section>
     </div>

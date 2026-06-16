@@ -210,7 +210,7 @@ export default function SupportPage() {
               <p className="text-gray-400 mb-6">Take the first step toward your dream career today.</p>
               <div className="flex flex-wrap justify-center gap-4">
                 <Link to="/signup" className="btn-accent inline-flex items-center gap-2">
-                  Get Started Free <ArrowRight size={16} />
+                  Request Access <ArrowRight size={16} />
                 </Link>
                 <Link to="/support" className="bg-transparent hover:bg-white/10 border-2 border-white/30 text-white font-semibold px-6 py-2.5 rounded-xl transition-all text-sm">
                   Talk to Counsellor

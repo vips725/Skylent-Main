@@ -2,7 +2,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const env = require("../config/constants");
-const { findUserByUsername } = require("../data/store");
+const { findUserById, findUserByUsername } = require("../data/store");
 
 function buildUserResponse(user) {
   return {
@@ -53,6 +53,40 @@ async function login(req, res) {
   }
 }
 
+async function me(req, res) {
+  try {
+    const user = await findUserById(req.user.sub);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      });
+    }
+
+    return res.json({
+      success: true,
+      user: buildUserResponse(user)
+    });
+  } catch (error) {
+    console.error("Fetch current user failed:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "User service is temporarily unavailable"
+    });
+  }
+}
+
+function logout(req, res) {
+  return res.json({
+    success: true,
+    message: "Logged out"
+  });
+}
+
 module.exports = {
-  login
+  login,
+  me,
+  logout
 };

@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Eye, EyeOff, GraduationCap, Mail, Lock, User, Phone, AlertCircle, CheckCircle2, ArrowRight } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
 
 const passwordStrength = (pw) => {
   let score = 0;
@@ -23,8 +22,6 @@ export default function Signup() {
   const [error, setError] = useState('');
   const [agreed, setAgreed] = useState(false);
   const [formRole, setFormRole] = useState('student');
-  const { signup } = useAuth();
-  const navigate = useNavigate();
 
   const pwStrength = passwordStrength(form.password);
 
@@ -40,7 +37,7 @@ export default function Signup() {
     if (form.password.length < 6) { setError('Password must be at least 6 characters'); return; }
     if (!agreed) { setError('Please agree to the terms and conditions'); return; }
     setLoading(true);
-    setError('Sign-up is temporarily unavailable. Please log in with the demo account.');
+    setError('Sign-up is currently unavailable. Please contact Skylent Global for account access.');
     setLoading(false);
   };
 
@@ -94,8 +91,13 @@ export default function Signup() {
           </Link>
 
           <div className="mb-6">
-            <h1 className="font-display text-3xl font-bold text-gray-900">Create your account</h1>
-            <p className="text-gray-500 mt-2">Already have an account? <Link to="/login" className="text-blue-600 font-semibold hover:underline">Sign in</Link></p>
+            <h1 className="font-display text-3xl font-bold text-gray-900">Request account access</h1>
+            <p className="text-gray-500 mt-2">Self-service sign-up is currently unavailable. Already have an account? <Link to="/login" className="text-blue-600 font-semibold hover:underline">Sign in</Link></p>
+          </div>
+
+          <div className="flex items-center gap-3 bg-blue-50 border border-blue-100 text-blue-700 text-sm rounded-xl px-4 py-3 mb-5">
+            <AlertCircle size={16} className="shrink-0" />
+            New accounts are created by Skylent Global. Submit your details here only as an access request.
           </div>
 
           {error && (
@@ -192,15 +194,15 @@ export default function Signup() {
               className="w-full flex items-center justify-center gap-2 py-3.5 text-base font-semibold rounded-xl text-white bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-700 hover:to-sky-600 shadow-lg shadow-blue-500/25 disabled:opacity-60 disabled:cursor-not-allowed transition-all mt-2"
             >
               {loading ? (
-                <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Creating account...</>
+                <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Sending request...</>
               ) : (
-                <>Create Free Account <ArrowRight size={16} /></>
+                <>Request Access <ArrowRight size={16} /></>
               )}
             </button>
           </form>
 
           <p className="text-xs text-gray-400 text-center mt-5">
-            By creating an account, you get access to free resources,<br />course previews, and career counselling.
+            Access requests are reviewed by the Skylent Global team.
           </p>
           <p className="text-center mt-4">
             <Link to="/login" className="text-blue-600 hover:underline">Go to Login</Link>

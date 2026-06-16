@@ -9,6 +9,8 @@ pnpm-debug.log*
 dist/
 build/
 out/
+.vite
+.vite/
 
 # Environment variables (VERY IMPORTANT)
 .env
@@ -44,6 +46,10 @@ coverage/
 # Temporary files
 tmp/
 temp/
+.cache
+.cache/
+.vercel
+.vercel/
 
 # TypeScript (if used)
 *.tsbuildinfo

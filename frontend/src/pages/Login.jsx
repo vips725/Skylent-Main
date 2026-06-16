@@ -96,8 +96,8 @@ export default function Login() {
               Sign in as <span className="text-blue-600 font-semibold capitalize">{role}</span>
             </p>
             <p className="text-gray-500 text-sm mt-1">
-              Don't have an account?{' '}
-              <Link to="/signup" className="text-blue-600 font-semibold hover:underline">Sign up free</Link>
+              Need an account?{' '}
+              <Link to="/signup" className="text-blue-600 font-semibold hover:underline">Request access</Link>
             </p>
           </div>
 
@@ -194,13 +194,13 @@ export default function Login() {
           {/* CTA */}
           <div className="mt-4 p-4 bg-blue-50 rounded-xl border border-blue-100">
             <p className="text-xs text-blue-700 font-medium text-center">
-              New to Skylent? Start your career journey today.
+              Account creation is managed by Skylent Global.
             </p>
             <Link
               to="/signup"
               className="block w-full text-center mt-2 text-sm font-semibold text-blue-600 hover:underline"
             >
-              Create Free Account →
+              Request access →
             </Link>
           </div>
         </div>
