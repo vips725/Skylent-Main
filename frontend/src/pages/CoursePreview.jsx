@@ -2,38 +2,55 @@ import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import {
   Star, Clock, Users, BarChart2, Globe, CheckCircle, PlayCircle,
-  ChevronDown, ChevronUp, BookOpen, Award, Zap, ArrowLeft,
-  Share2, Heart, ShieldCheck, Video, FileText, HelpCircle, Code,
-  ChevronRight, Lock, Eye
+  ChevronDown, ChevronUp, BookOpen, Award, ShieldCheck, Video,
+  FileText, HelpCircle, Code, ChevronRight, Lock, Eye, FileDown,
+  Share2, Heart, ArrowLeft,
 } from 'lucide-react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 
 const SAMPLE_CURRICULUM = [
   {
-    title: 'Getting Started',
+    title: 'Module 1',
     lessons: [
       { title: 'Welcome & Course Overview', type: 'video', duration: '5:00', preview: true },
       { title: 'Setup Your Environment', type: 'video', duration: '12:00', preview: true },
       { title: 'Introduction Quiz', type: 'quiz', duration: '5:00', preview: false },
+      { title: 'Fundamentals Explained', type: 'video', duration: '18:00', preview: false },
     ],
   },
   {
-    title: 'Core Concepts',
+    title: 'Module 2',
     lessons: [
-      { title: 'Fundamentals Explained', type: 'video', duration: '18:00', preview: false },
       { title: 'Deep Dive - Part 1', type: 'video', duration: '22:00', preview: false },
       { title: 'Deep Dive - Part 2', type: 'video', duration: '20:00', preview: false },
-      { title: 'Reading: Core Reference', type: 'text', duration: '10 min', preview: false },
       { title: 'Coding Exercise', type: 'code', duration: '30 min', preview: false },
+      { title: 'Midterm Assessment', type: 'quiz', duration: '15 min', preview: false },
     ],
   },
   {
-    title: 'Advanced Topics',
+    title: 'Module 3',
     lessons: [
-      { title: 'Advanced Patterns', type: 'video', duration: '25:00', preview: false },
-      { title: 'Real-World Project', type: 'code', duration: '45 min', preview: false },
-      { title: 'Final Assessment', type: 'quiz', duration: '20 min', preview: false },
+      { title: 'Advanced Patterns I', type: 'video', duration: '25:00', preview: false },
+      { title: 'Advanced Patterns II', type: 'video', duration: '25:00', preview: false },
+      { title: 'Group Project Phase 1', type: 'code', duration: '45 min', preview: false },
+    ],
+  },
+  {
+    title: 'Module 4',
+    lessons: [
+      { title: 'Real-World Case Study', type: 'text', duration: '20 min', preview: false },
+      { title: 'Industry Best Practices', type: 'video', duration: '18:00', preview: false },
+      { title: 'Group Project Phase 2', type: 'code', duration: '50 min', preview: false },
+    ],
+  },
+  {
+    title: 'Module 5',
+    lessons: [
+      { title: 'Final Project', type: 'code', duration: '60 min', preview: false },
+      { title: 'Portfolio Review', type: 'video', duration: '15:00', preview: false },
+      { title: 'Final Assessment', type: 'quiz', duration: '30 min', preview: false },
+      { title: 'Certificate & Next Steps', type: 'video', duration: '8:00', preview: false },
     ],
   },
 ];
@@ -42,7 +59,7 @@ function LessonIcon({ type }) {
   const map = {
     video: { icon: Video, className: 'text-red-400' },
     text: { icon: FileText, className: 'text-blue-400' },
-    quiz: { icon: HelpCircle, className: 'text-purple-400' },
+    quiz: { icon: HelpCircle, className: 'text-blue-400' },
     code: { icon: Code, className: 'text-green-400' },
   };
   const { icon: Icon, className } = map[type] || map.video;
@@ -108,7 +125,27 @@ export default function CoursePreview() {
         setCourse(r.data.course);
         if (user?.enrolledCourses?.includes(id)) setEnrolled(true);
       })
-      .catch(() => {})
+      .catch(() => {
+        // Fallback: try to find matching dummy course by id
+        const fallbackCourses = [
+          // Certificate courses
+          { id: '101', title: 'Full-Stack Web Development Bootcamp', category: 'Technology', level: 'Beginner', rating: 4.8, students: 12450, instructor: 'Priya Sharma', duration: '42 hours', price: 4999, originalPrice: 12999, badge: 'Bestseller', image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600&h=400&fit=crop', description: 'Master full-stack web development from scratch.', programType: 'Certificate', semesterPlan: [{ sem: 1, subjects: ['Foundations & Setup', 'Core Syntax'] }, { sem: 2, subjects: ['Frameworks & Tools', 'Project Work'] }] },
+          { id: '102', title: 'Digital Marketing Masterclass 2025', category: 'Marketing', level: 'Intermediate', rating: 4.7, students: 8920, instructor: 'Rahul Verma', duration: '28 hours', price: 3999, originalPrice: 9999, badge: 'Popular', image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&h=400&fit=crop', description: 'Complete digital marketing mastery course.', programType: 'Certificate' },
+          { id: '103', title: 'UI/UX Design Fundamentals with Figma', category: 'Design', level: 'Beginner', rating: 4.9, students: 6340, instructor: 'Ananya Patel', duration: '35 hours', price: 4499, originalPrice: 11999, badge: 'New', image: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=600&h=400&fit=crop', description: 'Learn UI/UX design with Figma.', programType: 'Certificate' },
+          { id: '104', title: 'Data Science & Machine Learning with Python', category: 'Technology', level: 'Advanced', rating: 4.6, students: 7100, instructor: 'Vikram Singh', duration: '60 hours', price: 7999, originalPrice: 19999, badge: 'Popular', image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&h=400&fit=crop', description: 'Python, ML, data science.', programType: 'Certificate' },
+          { id: '105', title: 'Content Strategy & SEO for Growth', category: 'Marketing', level: 'Intermediate', rating: 4.5, students: 4200, instructor: 'Meera Joshi', duration: '22 hours', price: 2999, originalPrice: 7999, badge: 'Bestseller', image: 'https://images.unsplash.com/photo-1432888622747-4eb9a8efeb07?w=600&h=400&fit=crop', description: 'SEO and content strategy.', programType: 'Certificate' },
+          { id: '106', title: 'Graphic Design Masterclass — Photoshop to Illustrator', category: 'Design', level: 'Beginner', rating: 4.7, students: 5680, instructor: 'Kavya Nair', duration: '38 hours', price: 3499, originalPrice: 9999, badge: 'New', image: 'https://images.unsplash.com/photo-1558655146-d09347e92766?w=600&h=400&fit=crop', description: 'Graphic design mastery.', programType: 'Certificate' },
+          { id: '107', title: 'Cybersecurity & Ethical Hacking', category: 'Technology', level: 'Advanced', rating: 4.8, students: 3450, instructor: 'Arjun Mehta', duration: '48 hours', price: 5999, originalPrice: 14999, badge: 'Popular', image: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=600&h=400&fit=crop', description: 'Cybersecurity and ethical hacking.', programType: 'Certificate' },
+          { id: '108', title: 'AI & Machine Learning Masterclass', category: 'Technology', level: 'Intermediate', rating: 4.9, students: 15600, instructor: 'Dr. Priya Nair', duration: '52 hours', price: 8999, originalPrice: 24999, badge: 'Bestseller', image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600&h=400&fit=crop', description: 'Advanced AI and ML.', programType: 'Certificate' },
+          // Master degree courses
+          { id: '201', title: 'MBA Digital Business Management', category: 'Marketing', level: 'Degree', rating: 4.7, students: 2100, instructor: 'Prof. Vikram Singh', duration: '24 months', price: 149999, originalPrice: 299999, badge: 'Premium', image: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=600&h=400&fit=crop', description: 'MBA in digital business.', programType: 'Master Degree', semesterPlan: [{ sem: 1, subjects: ['Advanced Theory I', 'Research Methods'] }, { sem: 2, subjects: ['Specialization Track', 'Case Studies'] }, { sem: 3, subjects: ['Industry Project', 'Leadership'] }, { sem: 4, subjects: ['Capstone', 'Dissertation'] }] },
+          { id: '202', title: 'Cloud Computing with AWS & Azure', category: 'Technology', level: 'Degree', rating: 4.6, students: 5200, instructor: 'Rohan Desai', duration: '18 months', price: 129999, originalPrice: 249999, badge: 'Degree Program', image: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=600&h=400&fit=crop', description: 'Cloud computing mastery.', programType: 'Master Degree', semesterPlan: [{ sem: 1, subjects: ['Advanced Theory I', 'Research Methods'] }, { sem: 2, subjects: ['Specialization Track', 'Case Studies'] }, { sem: 3, subjects: ['Industry Project', 'Leadership'] }, { sem: 4, subjects: ['Capstone', 'Dissertation'] }] },
+          { id: '203', title: 'Master of Computer Applications (MCA)', category: 'Technology', level: 'Degree', rating: 4.8, students: 4800, instructor: 'Prof. Arjun Mehta', duration: '24 months', price: 199999, originalPrice: 399999, badge: 'Degree Program', image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600&h=400&fit=crop', description: 'MCA program.', programType: 'Master Degree', semesterPlan: [{ sem: 1, subjects: ['Advanced Theory I', 'Research Methods'] }, { sem: 2, subjects: ['Specialization Track', 'Case Studies'] }, { sem: 3, subjects: ['Industry Project', 'Leadership'] }, { sem: 4, subjects: ['Capstone', 'Dissertation'] }] },
+          { id: '204', title: 'MBA Data Science & Analytics', category: 'Technology', level: 'Degree', rating: 4.9, students: 3100, instructor: 'Prof. Priya Nair', duration: '24 months', price: 179999, originalPrice: 349999, badge: 'Premium', image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&h=400&fit=crop', description: 'MBA in data science.', programType: 'Master Degree', semesterPlan: [{ sem: 1, subjects: ['Advanced Theory I', 'Research Methods'] }, { sem: 2, subjects: ['Specialization Track', 'Case Studies'] }, { sem: 3, subjects: ['Industry Project', 'Leadership'] }, { sem: 4, subjects: ['Capstone', 'Dissertation'] }] },
+        ];
+        const found = fallbackCourses.find(c => String(c.id) === String(id));
+        if (found) setCourse(found);
+      })
       .finally(() => setLoading(false));
   }, [id, user]);
 
@@ -120,11 +157,9 @@ export default function CoursePreview() {
     try {
       await axios.post(`/api/enroll/${id}`);
       setEnrolled(true);
-      setTimeout(() => navigate('/dashboard/courses'), 1000);
     } catch (err) {
       if (err.response?.status === 409) {
         setEnrolled(true);
-        navigate('/dashboard/courses');
       }
     } finally {
       setEnrolling(false);
@@ -173,7 +208,51 @@ export default function CoursePreview() {
   ];
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-white min-h-screen pt-20">
+      {/* Top gradient banner */}
+      <div className="bg-gradient-to-r from-blue-600 to-sky-500">
+        <div className="max-w-6xl mx-auto px-4 md:px-6 py-10">
+          <div className="flex flex-col lg:flex-row items-center gap-8">
+            {/* Left: course info */}
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-4 flex-wrap">
+                {c.badge && (
+                  <span className="bg-white/20 text-white text-xs font-bold px-2.5 py-1 rounded-full backdrop-blur-sm text-blue-600">{c.badge}</span>
+                )}
+                <span className="text-xs font-medium text-blue-100 bg-white/10 px-2.5 py-1 rounded-full">{c.category}</span>
+              </div>
+              <h1 className="font-display text-3xl md:text-4xl font-bold text-white mb-4 leading-tight">{c.title}</h1>
+
+              <div className="flex flex-wrap items-center gap-4 text-sm text-blue-100 mb-4">
+                <div className="flex items-center gap-1">
+                  <div className="flex">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} size={14} className={i < Math.floor(c.rating) ? 'text-yellow-300 fill-yellow-300' : 'text-white/30 fill-white/30'} />
+                    ))}
+                  </div>
+                  <span className="font-bold text-white ml-1">{c.rating}</span>
+                  <span className="text-blue-200">({(c.students * 2).toLocaleString()} ratings)</span>
+                </div>
+                <span className="flex items-center gap-1 text-blue-100"><Users size={14} /> {c.students?.toLocaleString()} students</span>
+                <span className="flex items-center gap-1 text-blue-100"><Clock size={14} /> {c.duration}</span>
+                <span className="flex items-center gap-1 text-blue-100"><BarChart2 size={14} /> {c.level}</span>
+              </div>
+
+              <p className="text-sm text-blue-100">
+                Created by <span className="text-white font-semibold">{c.instructor}</span>
+              </p>
+            </div>
+
+            {/* Right: course image */}
+            <div className="shrink-0">
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl w-64 md:w-72">
+                <img src={c.image} alt={c.title} className="w-full h-44 object-cover" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Breadcrumb */}
       <div className="bg-gray-50 border-b border-gray-100">
         <div className="max-w-6xl mx-auto px-4 md:px-6 py-3 flex items-center gap-2 text-sm text-gray-500">
@@ -191,69 +270,6 @@ export default function CoursePreview() {
         <div className="grid lg:grid-cols-3 gap-10">
           {/* Left content */}
           <div className="lg:col-span-2 space-y-8">
-            {/* Header */}
-            <div>
-              <div className="flex items-center gap-2 mb-3">
-                {c.badge && (
-                  <span className="bg-accent-500 text-white text-xs font-bold px-2.5 py-1 rounded-full">{c.badge}</span>
-                )}
-                <span className="text-xs font-medium text-gray-500 bg-gray-100 px-2.5 py-1 rounded-full">{c.category}</span>
-              </div>
-              <h1 className="font-display text-3xl font-bold text-gray-900 mb-3 leading-tight">{c.title}</h1>
-              <p className="text-gray-500 mb-4">{c.description}</p>
-
-              <div className="flex flex-wrap items-center gap-4 text-sm">
-                <div className="flex items-center gap-1">
-                  <div className="flex">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} size={14} className={i < Math.floor(c.rating) ? 'text-yellow-400 fill-yellow-400' : 'text-gray-200 fill-gray-200'} />
-                    ))}
-                  </div>
-                  <span className="font-bold text-gray-800 ml-1">{c.rating}</span>
-                  <span className="text-gray-400">({(c.students * 2).toLocaleString()} ratings)</span>
-                </div>
-                <span className="flex items-center gap-1 text-gray-500"><Users size={14} /> {c.students?.toLocaleString()} students</span>
-                <span className="flex items-center gap-1 text-gray-500"><Clock size={14} /> {c.duration}</span>
-                <span className="flex items-center gap-1 text-gray-500"><BarChart2 size={14} /> {c.level}</span>
-                <span className="flex items-center gap-1 text-gray-500"><Globe size={14} /> Hindi + English</span>
-              </div>
-
-              <p className="text-sm text-gray-500 mt-3">
-                Created by <span className="text-brand-500 font-medium hover:underline cursor-pointer">{c.instructor}</span>
-              </p>
-            </div>
-
-            {/* Course thumbnail (mobile only) */}
-            <div className="lg:hidden">
-              <div className="relative rounded-2xl overflow-hidden shadow-xl">
-                <img src={c.image} alt={c.title} className="w-full h-52 object-cover" />
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                  <div className="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center shadow-xl cursor-pointer hover:scale-105 transition-transform">
-                    <PlayCircle size={32} className="text-brand-500" />
-                  </div>
-                </div>
-              </div>
-              {/* Mobile pricing */}
-              <div className="mt-4 card p-5">
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="font-display text-3xl font-bold text-gray-900">₹{c.price?.toLocaleString()}</span>
-                  {c.originalPrice > c.price && (
-                    <>
-                      <span className="text-gray-400 line-through text-lg">₹{c.originalPrice?.toLocaleString()}</span>
-                      <span className="bg-red-100 text-red-600 text-sm font-bold px-2 py-0.5 rounded-lg">{discount}% off</span>
-                    </>
-                  )}
-                </div>
-                {enrolled ? (
-                  <Link to="/dashboard/courses" className="btn-primary w-full text-center block">Go to Course →</Link>
-                ) : (
-                  <button onClick={handleEnroll} disabled={enrolling} className="btn-primary w-full">
-                    {enrolling ? 'Enrolling...' : 'Enroll Now'}
-                  </button>
-                )}
-              </div>
-            </div>
-
             {/* What you'll learn */}
             <div className="card p-6">
               <h2 className="font-display font-bold text-xl text-gray-900 mb-4">What you'll learn</h2>
@@ -272,11 +288,11 @@ export default function CoursePreview() {
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h2 className="font-display font-bold text-xl text-gray-900">Course Curriculum</h2>
-                  <p className="text-sm text-gray-400 mt-0.5">{curriculum.length} modules • {totalLessons} lessons</p>
+                  <p className="text-sm text-gray-400 mt-0.5">{curriculum.length} modules · {totalLessons} lessons</p>
                 </div>
                 <button
                   onClick={() => setExpandAll(e => !e)}
-                  className="text-sm text-brand-500 font-medium hover:underline"
+                  className="text-sm text-blue-500 font-medium hover:underline"
                 >
                   {expandAll ? 'Collapse all' : 'Expand all'}
                 </button>
@@ -287,6 +303,30 @@ export default function CoursePreview() {
                 ))}
               </div>
             </div>
+
+            {/* Semester-wise Plan */}
+            {c.semesterPlan && c.semesterPlan.length > 0 && (
+              <div className="card p-6">
+                <h2 className="font-display font-bold text-xl text-gray-900 mb-4">Semester-wise Plan</h2>
+                <div className="space-y-4">
+                  {c.semesterPlan.map((sem, i) => (
+                    <div key={i} className="flex items-start gap-4">
+                      <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center text-sm font-bold text-blue-600 shrink-0">
+                        {sem.sem}
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-gray-800">Semester {sem.sem}</p>
+                        <div className="flex flex-wrap gap-2 mt-1">
+                          {sem.subjects.map((sub, j) => (
+                            <span key={j} className="text-xs bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full">{sub}</span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Instructor */}
             <div>
@@ -373,6 +413,14 @@ export default function CoursePreview() {
                     </div>
                   </div>
 
+                  {/* Download Brochure */}
+                  <a
+                    href="#"
+                    className="mt-4 w-full flex items-center justify-center gap-2 border border-gray-200 text-gray-700 hover:bg-gray-50 py-2.5 rounded-xl text-sm font-medium transition-all"
+                  >
+                    <FileDown size={16} /> Download Brochure
+                  </a>
+
                   {/* Trust badges */}
                   <div className="mt-4 pt-4 border-t border-gray-100 flex items-center gap-2">
                     <ShieldCheck size={16} className="text-brand-500" />
@@ -396,6 +444,34 @@ export default function CoursePreview() {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Mobile pricing (below content) */}
+        <div className="lg:hidden mt-8">
+          <div className="card p-5">
+            <div className="flex items-center gap-3 mb-4">
+              <span className="font-display text-3xl font-bold text-gray-900">₹{c.price?.toLocaleString()}</span>
+              {c.originalPrice > c.price && (
+                <>
+                  <span className="text-gray-400 line-through text-lg">₹{c.originalPrice?.toLocaleString()}</span>
+                  <span className="bg-red-100 text-red-600 text-sm font-bold px-2 py-0.5 rounded-lg">{discount}% off</span>
+                </>
+              )}
+            </div>
+            <a
+              href="#"
+              className="mb-3 w-full flex items-center justify-center gap-2 border border-gray-200 text-gray-700 hover:bg-gray-50 py-2.5 rounded-xl text-sm font-medium transition-all"
+            >
+              <FileDown size={16} /> Download Brochure
+            </a>
+            {enrolled ? (
+              <Link to="/dashboard/courses" className="btn-primary w-full text-center block">Go to Course →</Link>
+            ) : (
+              <button onClick={handleEnroll} disabled={enrolling} className="btn-primary w-full">
+                {enrolling ? 'Enrolling...' : 'Enroll Now'}
+              </button>
+            )}
           </div>
         </div>
       </div>

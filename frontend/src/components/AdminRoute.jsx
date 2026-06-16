@@ -17,7 +17,7 @@ export default function AdminRoute({ children }) {
   }
 
   if (!isAuthenticated) return <Navigate to="/login" state={{ from: location }} replace />;
-  if (!isAdmin) return <Navigate to="/dashboard" replace />;
+  if (!isAdmin) return <Navigate to="/" replace />;
 
   return children;
 }

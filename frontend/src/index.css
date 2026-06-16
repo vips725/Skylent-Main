@@ -20,7 +20,7 @@
     @apply bg-brand-500 hover:bg-brand-600 text-white font-semibold px-6 py-3 rounded-xl transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0;
   }
   .btn-secondary {
-    @apply bg-white border-2 border-brand-500 text-brand-500 hover:bg-brand-50 font-semibold px-6 py-3 rounded-xl transition-all duration-200;
+    @apply border-2 border-brand-500 text-brand-500 hover:bg-brand-50 font-semibold px-6 py-3 rounded-xl transition-all duration-200;
   }
   .btn-accent {
     @apply bg-accent-500 hover:bg-accent-600 text-white font-semibold px-6 py-3 rounded-xl transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5;
@@ -42,20 +42,32 @@
   }
 }
 
-/* Scrollbar */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #f1f5f9; }
-::-webkit-scrollbar-thumb { background: #c7d2fe; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #818cf8; }
+/* Scrollbar — neutral stone theme */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #d6d3d1; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #a8a29e; }
+
+/* Hide scrollbar utility */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
 
 /* Custom gradient backgrounds */
 .gradient-hero {
-  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 30%, #4338CA 60%, #4F46E5 100%);
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 40%, #bfdbfe 100%);
+}
+.gradient-hero-dark {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #1d4ed8 100%);
 }
 .gradient-card {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
 }
 .mesh-bg {
-  background-color: #f8faff;
-  background-image: radial-gradient(at 40% 20%, #e0e7ff 0px, transparent 50%), radial-gradient(at 80% 0%, #ede9fe 0px, transparent 50%), radial-gradient(at 0% 50%, #dbeafe 0px, transparent 50%);
+  background-color: #f0f9ff;
+  background-image: radial-gradient(at 40% 20%, #eff6ff 0px, transparent 50%), radial-gradient(at 80% 0%, #dbeafe 0px, transparent 50%), radial-gradient(at 0% 50%, #bfdbfe 0px, transparent 50%);
 }

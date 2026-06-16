@@ -4,6 +4,17 @@ import axios from 'axios';
 const AuthContext = createContext(null);
 const API_BASE = '/api';
 
+function decodeJwt(token) {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const json = atob(base64);
+    return JSON.parse(json);
+  } catch {
+    return null;
+  }
+}
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(() => localStorage.getItem('skylent_token'));
@@ -19,29 +30,49 @@ export function AuthProvider({ children }) {
   }, [token]);
 
   const fetchMe = async () => {
+    if (!token) {
+      setLoading(false);
+      return;
+    }
     try {
-      const { data } = await axios.get(`${API_BASE}/auth/me`);
-      setUser(data.user);
-    } catch { logout(); }
-    finally { setLoading(false); }
+      const payload = decodeJwt(token);
+      if (!payload) {
+        logout();
+        return;
+      }
+      const user = {
+        id: payload.sub,
+        name: payload.username,
+        username: payload.username,
+        role: payload.role,
+      };
+      setUser(user);
+    } catch {
+      logout();
+    } finally {
+      setLoading(false);
+    }
   };
 
   const login = async (email, password) => {
-    const { data } = await axios.post(`${API_BASE}/auth/login`, { email, password });
+    const { data } = await axios.post(`${API_BASE}/auth/login`, { username: email, password });
     localStorage.setItem('skylent_token', data.token);
     axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
     setToken(data.token);
-    setUser(data.user);
-    return data;
+
+    const payload = decodeJwt(data.token);
+    const user = {
+      id: payload.sub,
+      name: payload.username,
+      username: payload.username,
+      role: payload.role,
+    };
+    setUser(user);
+    return user;
   };
 
-  const signup = async (name, email, password, phone) => {
-    const { data } = await axios.post(`${API_BASE}/auth/signup`, { name, email, password, phone });
-    localStorage.setItem('skylent_token', data.token);
-    axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
-    setToken(data.token);
-    setUser(data.user);
-    return data;
+  const signup = async (name, email, password, phone, role = 'student') => {
+    throw new Error('Sign-up is temporarily unavailable. Please use the demo login account.');
   };
 
   const logout = () => {

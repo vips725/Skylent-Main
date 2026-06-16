@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, GraduationCap, Mail, Lock, User, Phone, AlertCircle, CheckCircle2, ArrowRight } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -22,7 +22,9 @@ export default function Signup() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [agreed, setAgreed] = useState(false);
+  const [formRole, setFormRole] = useState('student');
   const { signup } = useAuth();
+  const navigate = useNavigate();
 
   const pwStrength = passwordStrength(form.password);
 
@@ -38,23 +40,18 @@ export default function Signup() {
     if (form.password.length < 6) { setError('Password must be at least 6 characters'); return; }
     if (!agreed) { setError('Please agree to the terms and conditions'); return; }
     setLoading(true);
-    try {
-      await signup(form.name, form.email, form.password, form.phone);
-      window.location.href = 'https://skylent-global-demo.vercel.app';
-    } catch (err) {
-      setError(err.response?.data?.message || 'Something went wrong. Please try again.');
-    } finally {
-      setLoading(false);
-    }
+    setError('Sign-up is temporarily unavailable. Please log in with the demo account.');
+    setLoading(false);
   };
 
   return (
     <div className="min-h-screen flex">
-      {/* Left panel */}
-      <div className="hidden lg:flex lg:w-1/2 gradient-hero relative overflow-hidden">
+      {/* Left panel — purple gradient */}
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-slate-900 via-blue-950 to-sky-950 relative overflow-hidden">
         <div className="absolute inset-0">
-          <div className="absolute top-1/3 left-1/3 w-72 h-72 bg-white/5 rounded-full blur-3xl" />
-          <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl" />
+          <div className="absolute top-1/3 left-1/3 w-72 h-72 bg-blue-400/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-sky-500/15 rounded-full blur-3xl" />
+          <div className="absolute top-1/2 left-1/4 w-48 h-48 bg-cyan-400/10 rounded-full blur-2xl" />
         </div>
         <div className="relative z-10 flex flex-col justify-center px-16">
           <Link to="/" className="flex items-center gap-2.5 mb-12">
@@ -90,7 +87,7 @@ export default function Signup() {
       <div className="flex-1 flex items-center justify-center px-6 py-12 bg-white overflow-y-auto">
         <div className="w-full max-w-md">
           <Link to="/" className="flex items-center gap-2 mb-6 lg:hidden">
-            <div className="w-8 h-8 bg-brand-500 rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
               <GraduationCap size={18} className="text-white" />
             </div>
             <span className="font-display font-bold text-lg text-gray-900">Skylent Global</span>
@@ -98,7 +95,7 @@ export default function Signup() {
 
           <div className="mb-6">
             <h1 className="font-display text-3xl font-bold text-gray-900">Create your account</h1>
-            <p className="text-gray-500 mt-2">Already have an account? <Link to="/login" className="text-brand-500 font-semibold hover:underline">Sign in</Link></p>
+            <p className="text-gray-500 mt-2">Already have an account? <Link to="/login" className="text-blue-600 font-semibold hover:underline">Sign in</Link></p>
           </div>
 
           {error && (
@@ -115,6 +112,20 @@ export default function Signup() {
                 <User size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input name="name" type="text" value={form.name} onChange={handleChange} placeholder="Your full name" className="input-field pl-10" autoComplete="name" />
               </div>
+            </div>
+
+            {/* Role toggle */}
+            <div className="flex bg-gray-100 rounded-xl p-1 mb-2">
+              {['student', 'admin', 'organization'].map(r => (
+                <button
+                  key={r}
+                  type="button"
+                  onClick={() => setFormRole(r)}
+                  className={`flex-1 py-2 text-sm font-medium rounded-lg capitalize transition-all ${formRole === r ? 'bg-blue-500 text-white shadow' : 'text-gray-600 hover:bg-gray-200'}`}
+                >
+                  {r}
+                </button>
+              ))}
             </div>
 
             <div>
@@ -166,19 +177,19 @@ export default function Signup() {
             </div>
 
             <label className="flex items-start gap-3 cursor-pointer pt-1">
-              <input type="checkbox" checked={agreed} onChange={e => setAgreed(e.target.checked)} className="mt-0.5 w-4 h-4 accent-brand-500 shrink-0" />
+              <input type="checkbox" checked={agreed} onChange={e => setAgreed(e.target.checked)} className="mt-0.5 w-4 h-4 accent-blue-500 shrink-0" />
               <span className="text-sm text-gray-600">
                 I agree to Skylent's{' '}
-                <Link to="/terms" className="text-brand-500 hover:underline">Terms of Service</Link>{' '}
+                <Link to="/terms" className="text-blue-500 hover:underline">Terms of Service</Link>{' '}
                 and{' '}
-                <Link to="/privacy" className="text-brand-500 hover:underline">Privacy Policy</Link>
+                <Link to="/privacy" className="text-blue-500 hover:underline">Privacy Policy</Link>
               </span>
             </label>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full btn-primary flex items-center justify-center gap-2 py-3.5 text-base disabled:opacity-60 disabled:cursor-not-allowed mt-2"
+              className="w-full flex items-center justify-center gap-2 py-3.5 text-base font-semibold rounded-xl text-white bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-700 hover:to-sky-600 shadow-lg shadow-blue-500/25 disabled:opacity-60 disabled:cursor-not-allowed transition-all mt-2"
             >
               {loading ? (
                 <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Creating account...</>
@@ -190,6 +201,9 @@ export default function Signup() {
 
           <p className="text-xs text-gray-400 text-center mt-5">
             By creating an account, you get access to free resources,<br />course previews, and career counselling.
+          </p>
+          <p className="text-center mt-4">
+            <Link to="/login" className="text-blue-600 hover:underline">Go to Login</Link>
           </p>
         </div>
       </div>
