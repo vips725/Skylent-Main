@@ -1,9 +1,11 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { FiBookOpen, FiArrowRight, FiFilter } from "react-icons/fi";
 import { Award, Download, Eye } from "lucide-react";
 
 const mockCourses = [
   {
+    id: 101,
     name: "Advanced React Patterns",
     progress: 75,
     lessonsCompleted: 15,
@@ -14,6 +16,7 @@ const mockCourses = [
     darkGradient: "dark:from-violet-900 dark:to-indigo-900",
   },
   {
+    id: 102,
     name: "Node.js Backend Development",
     progress: 45,
     lessonsCompleted: 9,
@@ -24,6 +27,7 @@ const mockCourses = [
     darkGradient: "dark:from-emerald-900 dark:to-teal-900",
   },
   {
+    id: 103,
     name: "TypeScript Fundamentals",
     progress: 90,
     lessonsCompleted: 18,
@@ -34,6 +38,7 @@ const mockCourses = [
     darkGradient: "dark:from-blue-900 dark:to-cyan-900",
   },
   {
+    id: 104,
     name: "GraphQL & Apollo",
     progress: 20,
     lessonsCompleted: 4,
@@ -69,6 +74,7 @@ const certificates = [
 const tabs = ["All", "In Progress", "Completed", "Certificates"];
 
 const StudentCoursesPage = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("All");
 
   return (
@@ -149,7 +155,10 @@ const StudentCoursesPage = () => {
 
               {/* Action Button */}
               <div className="mt-4 flex gap-2">
-                <button className="text-xs bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 px-3 py-1.5 rounded-lg hover:bg-violet-200 dark:hover:bg-violet-900/50 transition-colors duration-200 font-medium">
+                <button
+                  className="text-xs font-medium px-3 py-1.5 rounded-lg transition-all bg-white/30 dark:bg-white/10 backdrop-blur-md border border-white/40 dark:border-white/20 text-violet-700 dark:text-violet-300 hover:bg-white/50 dark:hover:bg-white/20 shadow-sm"
+                  onClick={() => navigate(`/student/courses/${course.id}/lecture`)}
+                >
                   Continue Learning
                 </button>
                 <button className="text-xs bg-stone-100 dark:bg-stone-700 text-stone-600 dark:text-stone-400 px-3 py-1.5 rounded-lg hover:bg-stone-200 dark:hover:bg-stone-600 transition-colors duration-200 font-medium">

@@ -1,9 +1,15 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import StudentSidebar from "../components/StudentSidebar";
 import { DarkModeProvider, useDarkMode } from "../context/DarkModeContext";
 
 const StudentLayoutInner = () => {
   const { isDark } = useDarkMode();
+  const location = useLocation();
+  const isLecturePage = location.pathname.includes('/lecture');
+
+  if (isLecturePage) {
+    return <Outlet />;
+  }
 
   return (
     <div className={`min-h-screen w-full bg-stone-50 dark:bg-stone-900 grid grid-cols-[220px_1fr] gap-4 p-4 transition-colors duration-300 ${isDark ? 'dark' : ''}`}>
@@ -26,6 +32,7 @@ const StudentLayout = () => {
       <StudentLayoutInner />
     </DarkModeProvider>
   );
+  
 };
 
 export default StudentLayout;

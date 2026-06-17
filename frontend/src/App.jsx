@@ -18,11 +18,13 @@ import AdminDashboard from './components/AdminDashboard';
 import AnalyticsPage from './pages/AnalyticsPage';
 import UsersPage from './pages/UsersPage';
 import CoursesAdminPage from './pages/CoursesAdminPage';
+import CourseBuilder from './pages/CourseBuilder';
 import ReportsPage from './pages/ReportsPage';
 import EngagementPage from './pages/EngagementPage';
 import StudentLayout from './layouts/StudentLayout';
 import StudentRoute from './components/StudentRoute';
 import StudentCoursesPage from './pages/StudentCoursesPage';
+import CourseLecture from './pages/CourseLecture';
 import StudentDashboard from './components/StudentDashboard';
 import { DarkModeProvider } from './context/DarkModeContext';
 
@@ -91,6 +93,8 @@ export default function App() {
             <Route path="analytics" element={<AnalyticsPage />} />
             <Route path="users" element={<UsersPage />} />
             <Route path="courses" element={<CoursesAdminPage />} />
+            <Route path="courses/new" element={<CourseBuilder />} />
+            <Route path="courses/:id/edit" element={<CourseBuilder />} />
             <Route path="reports" element={<ReportsPage />} />
             <Route path="engagement" element={<EngagementPage />} />
           </Route>
@@ -106,6 +110,7 @@ export default function App() {
             <Route index element={<Navigate to="dashboard" replace />} />
             <Route path="dashboard" element={<StudentDashboard />} />
             <Route path="courses" element={<StudentCoursesPage />} />
+            <Route path="courses/:id/lecture" element={<CourseLecture />} />
           </Route>
 
           <Route path="*" element={

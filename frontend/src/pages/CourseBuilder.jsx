@@ -1,10 +1,9 @@
-import { useState, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   ArrowLeft, Plus, Trash2, GripVertical, ChevronDown, ChevronRight,
-  Video, FileText, HelpCircle, Code, Save, Eye, Upload, X,
-  PlayCircle, Clock, BookOpen, Users, Star, CheckCircle, AlertCircle,
-  Settings, Globe, Lock, Tag, DollarSign, Image as ImageIcon, Layers
+  Video, FileText, HelpCircle, Code, Save, Eye, CheckCircle,
+  DollarSign, Image as ImageIcon, Layers, PlayCircle
 } from 'lucide-react';
 import axios from 'axios';
 
@@ -29,7 +28,7 @@ function LessonRow({ lesson, moduleIdx, lessonIdx, onUpdate, onDelete }) {
   const [editing, setEditing] = useState(false);
 
   return (
-    <div className="flex items-center gap-3 px-3 py-2.5 bg-gray-50 rounded-xl group hover:bg-brand-50/40 transition-all">
+    <div className="flex items-center gap-3 px-3 py-2.5 bg-gray-50 rounded-xl group hover:bg-violet-50/40 transition-all">
       <GripVertical size={14} className="text-gray-300 cursor-grab shrink-0" />
       <LessonTypeIcon type={lesson.type} />
       {editing ? (
@@ -39,7 +38,7 @@ function LessonRow({ lesson, moduleIdx, lessonIdx, onUpdate, onDelete }) {
           onChange={e => onUpdate(moduleIdx, lessonIdx, { ...lesson, title: e.target.value })}
           onBlur={() => setEditing(false)}
           onKeyDown={e => e.key === 'Enter' && setEditing(false)}
-          className="flex-1 text-sm bg-white border border-brand-300 rounded-lg px-2 py-1 focus:outline-none focus:border-brand-500"
+          className="flex-1 text-sm bg-white border border-violet-300 rounded-lg px-2 py-1 focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30"
         />
       ) : (
         <span
@@ -53,7 +52,7 @@ function LessonRow({ lesson, moduleIdx, lessonIdx, onUpdate, onDelete }) {
         <select
           value={lesson.type}
           onChange={e => onUpdate(moduleIdx, lessonIdx, { ...lesson, type: e.target.value })}
-          className="text-xs border border-gray-200 rounded-lg px-2 py-1 bg-white focus:outline-none focus:border-brand-400"
+          className="text-xs border border-gray-200 rounded-lg px-2 py-1 bg-white focus:outline-none focus:border-violet-400"
         >
           {LESSON_TYPES.map(t => <option key={t.type} value={t.type}>{t.label}</option>)}
         </select>
@@ -62,7 +61,7 @@ function LessonRow({ lesson, moduleIdx, lessonIdx, onUpdate, onDelete }) {
           placeholder="0:00"
           value={lesson.duration || ''}
           onChange={e => onUpdate(moduleIdx, lessonIdx, { ...lesson, duration: e.target.value })}
-          className="w-14 text-xs border border-gray-200 rounded-lg px-2 py-1 bg-white text-center focus:outline-none focus:border-brand-400"
+          className="w-14 text-xs border border-gray-200 rounded-lg px-2 py-1 bg-white text-center focus:outline-none focus:border-violet-400"
         />
         <button
           onClick={() => onUpdate(moduleIdx, lessonIdx, { ...lesson, preview: !lesson.preview })}
@@ -87,14 +86,14 @@ function ModuleBlock({ module, moduleIdx, onUpdate, onDelete, onAddLesson, onUpd
   const [editingTitle, setEditingTitle] = useState(false);
 
   return (
-    <div className="card border border-gray-200 overflow-hidden">
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
       {/* Module header */}
       <div className="flex items-center gap-3 p-4 bg-gray-50 border-b border-gray-100">
         <GripVertical size={16} className="text-gray-300 cursor-grab shrink-0" />
         <button onClick={() => setOpen(o => !o)} className="text-gray-400 hover:text-gray-600">
           {open ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
         </button>
-        <div className="w-7 h-7 rounded-lg bg-brand-100 flex items-center justify-center text-xs font-bold text-brand-600 shrink-0">
+        <div className="w-7 h-7 rounded-lg bg-violet-100 flex items-center justify-center text-xs font-bold text-violet-600 shrink-0">
           {moduleIdx + 1}
         </div>
         {editingTitle ? (
@@ -104,11 +103,11 @@ function ModuleBlock({ module, moduleIdx, onUpdate, onDelete, onAddLesson, onUpd
             onChange={e => onUpdate(moduleIdx, { ...module, title: e.target.value })}
             onBlur={() => setEditingTitle(false)}
             onKeyDown={e => e.key === 'Enter' && setEditingTitle(false)}
-            className="flex-1 font-semibold bg-white border border-brand-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-brand-500"
+            className="flex-1 font-semibold bg-white border border-violet-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30"
           />
         ) : (
           <span
-            className="flex-1 font-semibold text-gray-800 text-sm cursor-text hover:text-brand-600"
+            className="flex-1 font-semibold text-gray-800 text-sm cursor-text hover:text-violet-600"
             onClick={() => setEditingTitle(true)}
           >
             {module.title || <span className="text-gray-400 italic">Untitled module</span>}
@@ -116,7 +115,10 @@ function ModuleBlock({ module, moduleIdx, onUpdate, onDelete, onAddLesson, onUpd
         )}
         <span className="text-xs text-gray-400 shrink-0">{module.lessons.length} lessons</span>
         <button
-          onClick={() => onDelete(moduleIdx)}
+          onClick={() => {
+            if (!confirm('Delete this module?')) return;
+            onDelete(moduleIdx);
+          }}
           className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-300 hover:text-red-500 hover:bg-red-50 transition-all"
         >
           <Trash2 size={14} />
@@ -138,7 +140,7 @@ function ModuleBlock({ module, moduleIdx, onUpdate, onDelete, onAddLesson, onUpd
           ))}
           <button
             onClick={() => onAddLesson(moduleIdx)}
-            className="w-full flex items-center gap-2 px-3 py-2 text-sm text-brand-500 hover:bg-brand-50 rounded-xl transition-all font-medium border-2 border-dashed border-brand-200 hover:border-brand-400"
+            className="w-full flex items-center gap-2 px-3 py-2 text-sm text-violet-600 hover:bg-violet-50 rounded-xl transition-all font-medium border-2 border-dashed border-violet-200 hover:border-violet-400"
           >
             <Plus size={14} /> Add Lesson
           </button>
@@ -148,215 +150,30 @@ function ModuleBlock({ module, moduleIdx, onUpdate, onDelete, onAddLesson, onUpd
   );
 }
 
-// ── Sidebar panel tabs ──────────────────────────────────────────────────────
-function CourseInfoPanel({ form, setForm }) {
-  return (
-    <div className="space-y-4">
-      <div>
-        <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Course Title *</label>
-        <input
-          value={form.title}
-          onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
-          placeholder="e.g. Full Stack Web Development"
-          className="input-field text-sm"
-        />
-      </div>
-      <div>
-        <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Subtitle</label>
-        <input
-          value={form.subtitle}
-          onChange={e => setForm(f => ({ ...f, subtitle: e.target.value }))}
-          placeholder="A brief subtitle for the course"
-          className="input-field text-sm"
-        />
-      </div>
-      <div>
-        <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Description</label>
-        <textarea
-          value={form.description}
-          onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
-          placeholder="What will students learn?"
-          rows={4}
-          className="input-field text-sm resize-none"
-        />
-      </div>
-      <div className="grid grid-cols-2 gap-3">
-        <div>
-          <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Category</label>
-          <select value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))} className="input-field text-sm">
-            {['Technology', 'Marketing', 'Design', 'MBA', 'Finance', 'Other'].map(c => (
-              <option key={c}>{c}</option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Level</label>
-          <select value={form.level} onChange={e => setForm(f => ({ ...f, level: e.target.value }))} className="input-field text-sm">
-            {['Beginner', 'Intermediate', 'Advanced', 'All Levels'].map(l => (
-              <option key={l}>{l}</option>
-            ))}
-          </select>
-        </div>
-      </div>
-      <div>
-        <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Instructor</label>
-        <input
-          value={form.instructor}
-          onChange={e => setForm(f => ({ ...f, instructor: e.target.value }))}
-          placeholder="Instructor name"
-          className="input-field text-sm"
-        />
-      </div>
-      <div>
-        <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Duration</label>
-        <input
-          value={form.duration}
-          onChange={e => setForm(f => ({ ...f, duration: e.target.value }))}
-          placeholder="e.g. 6 months"
-          className="input-field text-sm"
-        />
-      </div>
-    </div>
-  );
-}
+const INPUT_CLASS = 'w-full px-3.5 py-2.5 bg-gray-50/80 border border-gray-300 text-gray-900 placeholder-gray-500 rounded-xl text-sm focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30';
+const SELECT_CLASS = 'w-full px-3.5 py-2.5 bg-gray-50/80 border border-gray-300 text-gray-900 rounded-xl text-sm focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30 cursor-pointer';
 
-function PricingPanel({ form, setForm }) {
-  return (
-    <div className="space-y-4">
-      <div>
-        <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Selling Price (₹)</label>
-        <div className="relative">
-          <DollarSign size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input
-            type="number"
-            value={form.price}
-            onChange={e => setForm(f => ({ ...f, price: e.target.value }))}
-            placeholder="29999"
-            className="input-field text-sm pl-9"
-          />
-        </div>
-      </div>
-      <div>
-        <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Original Price (₹)</label>
-        <div className="relative">
-          <DollarSign size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input
-            type="number"
-            value={form.originalPrice}
-            onChange={e => setForm(f => ({ ...f, originalPrice: e.target.value }))}
-            placeholder="49999"
-            className="input-field text-sm pl-9"
-          />
-        </div>
-      </div>
-      {form.price && form.originalPrice && (
-        <div className="bg-green-50 rounded-xl p-3 flex items-center gap-2">
-          <CheckCircle size={15} className="text-green-500" />
-          <span className="text-sm text-green-700 font-medium">
-            {Math.round((1 - form.price / form.originalPrice) * 100)}% discount
-          </span>
-        </div>
-      )}
-      <div>
-        <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Badge</label>
-        <input
-          value={form.badge}
-          onChange={e => setForm(f => ({ ...f, badge: e.target.value }))}
-          placeholder="e.g. Bestseller, Hot, New"
-          className="input-field text-sm"
-        />
-      </div>
-      <div>
-        <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Visibility</label>
-        <div className="flex gap-2">
-          {[
-            { val: 'public', label: 'Public', icon: Globe },
-            { val: 'private', label: 'Private', icon: Lock },
-          ].map(({ val, label, icon: Icon }) => (
-            <button
-              key={val}
-              onClick={() => setForm(f => ({ ...f, visibility: val }))}
-              className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border-2 text-sm font-medium transition-all ${
-                form.visibility === val
-                  ? 'border-brand-500 bg-brand-50 text-brand-600'
-                  : 'border-gray-200 text-gray-500 hover:border-gray-300'
-              }`}
-            >
-              <Icon size={14} /> {label}
-            </button>
-          ))}
-        </div>
-      </div>
-      <div>
-        <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Tags (comma separated)</label>
-        <div className="relative">
-          <Tag size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input
-            value={form.tags}
-            onChange={e => setForm(f => ({ ...f, tags: e.target.value }))}
-            placeholder="react, web dev, javascript"
-            className="input-field text-sm pl-9"
-          />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function MediaPanel({ form, setForm }) {
-  return (
-    <div className="space-y-4">
-      <div>
-        <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Thumbnail URL</label>
-        <input
-          value={form.image}
-          onChange={e => setForm(f => ({ ...f, image: e.target.value }))}
-          placeholder="https://..."
-          className="input-field text-sm"
-        />
-        {form.image && (
-          <img src={form.image} alt="thumbnail" className="mt-2 w-full h-32 object-cover rounded-xl border border-gray-200" />
-        )}
-        <div className="mt-2 border-2 border-dashed border-gray-200 rounded-xl p-4 text-center hover:border-brand-400 hover:bg-brand-50/30 transition-all cursor-pointer">
-          <Upload size={20} className="mx-auto text-gray-300 mb-1" />
-          <p className="text-xs text-gray-400">Or drag & drop an image</p>
-        </div>
-      </div>
-      <div>
-        <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Intro Video URL</label>
-        <input
-          value={form.introVideo}
-          onChange={e => setForm(f => ({ ...f, introVideo: e.target.value }))}
-          placeholder="https://youtube.com/..."
-          className="input-field text-sm"
-        />
-      </div>
-    </div>
-  );
-}
-
-// ─── Main Course Builder ──────────────────────────────────────────────────────
 export default function CourseBuilder() {
   const navigate = useNavigate();
+  const { id } = useParams();
+  const isEditMode = id && id !== 'new';
+
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [activePanel, setActivePanel] = useState('info');
+  const [fetchError, setFetchError] = useState(false);
 
   const [form, setForm] = useState({
     title: '',
-    subtitle: '',
-    description: '',
-    category: 'Technology',
-    level: 'Beginner',
     instructor: '',
     duration: '',
-    price: '',
-    originalPrice: '',
-    badge: '',
-    visibility: 'public',
-    tags: '',
+    programType: 'Professional Certificate',
+    category: 'Technology',
+    level: 'Beginner',
+    status: 'Draft',
     image: '',
-    introVideo: '',
+    description: '',
+    sellingPrice: '',
+    originalPrice: '',
   });
 
   const [modules, setModules] = useState([
@@ -370,11 +187,35 @@ export default function CourseBuilder() {
     },
   ]);
 
-  const totalLessons = modules.reduce((s, m) => s + m.lessons.length, 0);
+  // Fetch course data in edit mode
+  useEffect(() => {
+    if (!isEditMode) return;
+    axios.get(`/api/admin/courses/${id}`)
+      .then(res => {
+        const d = res.data;
+        setForm({
+          title: d.title || '',
+          instructor: d.instructor || '',
+          duration: d.duration || '',
+          programType: d.programType || 'Professional Certificate',
+          category: d.category || 'Technology',
+          level: d.level || 'Beginner',
+          status: d.status || 'Draft',
+          image: d.image || '',
+          description: d.description || '',
+          sellingPrice: d.sellingPrice ?? d.price ?? '',
+          originalPrice: d.originalPrice ?? '',
+        });
+        if (d.curriculum && Array.isArray(d.curriculum) && d.curriculum.length > 0) {
+          setModules(d.curriculum);
+        }
+      })
+      .catch(() => setFetchError(true));
+  }, [id, isEditMode]);
 
   const addModule = () => {
-    const id = `mod-${Date.now()}`;
-    setModules(m => [...m, { id, title: '', lessons: [] }]);
+    const newMod = { id: `mod-${Date.now()}`, title: '', lessons: [] };
+    setModules(m => [...m, newMod]);
   };
 
   const updateModule = (idx, updated) => {
@@ -382,7 +223,6 @@ export default function CourseBuilder() {
   };
 
   const deleteModule = (idx) => {
-    if (!confirm('Delete this module?')) return;
     setModules(m => m.filter((_, i) => i !== idx));
   };
 
@@ -408,95 +248,280 @@ export default function CourseBuilder() {
     ));
   };
 
+  const discountPct = (() => {
+    const sp = parseFloat(form.sellingPrice);
+    const op = parseFloat(form.originalPrice);
+    if (sp && op && op > sp) {
+      return Math.round((1 - sp / op) * 100);
+    }
+    return null;
+  })();
+
   const handleSave = async () => {
-    if (!form.title) { alert('Please enter a course title.'); return; }
+    if (!form.title.trim()) {
+      alert('Please enter a course title.');
+      return;
+    }
     setSaving(true);
     try {
       const payload = {
         ...form,
-        price: Number(form.price) || 0,
-        originalPrice: Number(form.originalPrice) || 0,
+        sellingPrice: parseFloat(form.sellingPrice) || 0,
+        originalPrice: parseFloat(form.originalPrice) || 0,
+        price: parseFloat(form.sellingPrice) || 0,
         curriculum: modules,
       };
-      await axios.post('/api/admin/courses', payload);
+      if (isEditMode) {
+        await axios.put(`/api/admin/courses/${id}`, payload);
+      } else {
+        await axios.post('/api/admin/courses', payload);
+      }
       setSaved(true);
       setTimeout(() => navigate('/admin/courses'), 1200);
-    } catch (err) {
+    } catch {
       alert('Failed to save. Please check if the backend is running.');
     } finally {
       setSaving(false);
     }
   };
 
-  const panels = [
-    { id: 'info', label: 'Info', icon: BookOpen },
-    { id: 'pricing', label: 'Pricing', icon: DollarSign },
-    { id: 'media', label: 'Media', icon: ImageIcon },
-  ];
+  const pageTitle = isEditMode ? 'Edit Course' : 'Create New Course';
+  const breadcrumbCourse = isEditMode
+    ? (form.title || 'Untitled Course')
+    : 'Untitled Course';
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Top bar */}
-      <header className="sticky top-0 z-30 bg-white border-b border-gray-100 px-4 md:px-6 h-16 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Link to="/admin/courses" className="w-9 h-9 rounded-xl bg-gray-50 flex items-center justify-center text-gray-500 hover:bg-gray-100 transition-all">
-            <ArrowLeft size={18} />
-          </Link>
-          <div>
-            <h1 className="font-display font-bold text-gray-900 text-base leading-tight">Course Builder</h1>
-            <p className="text-xs text-gray-400 leading-none">{form.title || 'New Course'}</p>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
+    <div className="p-4 md:p-6 space-y-6">
+      {/* Breadcrumb row */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2 text-sm">
           <Link
             to="/admin/courses"
-            className="flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-gray-800 px-3 py-2 rounded-xl hover:bg-gray-100 transition-all"
+            className="flex items-center gap-1.5 text-gray-500 hover:text-gray-800 transition-colors"
           >
-            <Eye size={15} /> Preview
+            <ArrowLeft size={15} />
+            Back to Courses
           </Link>
+          <span className="text-gray-300">/</span>
+          <span className="text-gray-500">All Courses</span>
+          <span className="text-gray-300">/</span>
+          <span className="text-gray-800 font-medium">{breadcrumbCourse}</span>
+        </div>
+      </div>
+
+      {/* Page title */}
+      <div>
+        <h1 className="text-xl font-bold text-gray-900">{pageTitle}</h1>
+      </div>
+
+      {/* Fetch error notice */}
+      {fetchError && (
+        <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-700">
+          Could not load course data from the server. You can still edit and save.
+        </div>
+      )}
+
+      {/* ── Card A: Course Details ──────────────────────────────── */}
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+        <h2 className="text-base font-bold text-gray-900 mb-5">📋 Course Details</h2>
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* title */}
+            <div>
+              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
+                Course Title <span className="text-red-400">*</span>
+              </label>
+              <input
+                value={form.title}
+                onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
+                placeholder="e.g. Full Stack Web Development"
+                className={INPUT_CLASS}
+              />
+            </div>
+            {/* instructor */}
+            <div>
+              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
+                Instructor <span className="text-red-400">*</span>
+              </label>
+              <input
+                value={form.instructor}
+                onChange={e => setForm(f => ({ ...f, instructor: e.target.value }))}
+                placeholder="Prof. Name"
+                className={INPUT_CLASS}
+              />
+            </div>
+            {/* duration */}
+            <div>
+              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Duration</label>
+              <input
+                value={form.duration}
+                onChange={e => setForm(f => ({ ...f, duration: e.target.value }))}
+                placeholder="e.g., 42 hours"
+                className={INPUT_CLASS}
+              />
+            </div>
+            {/* programType */}
+            <div>
+              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Program Type</label>
+              <select
+                value={form.programType}
+                onChange={e => setForm(f => ({ ...f, programType: e.target.value }))}
+                className={SELECT_CLASS}
+              >
+                <option>Professional Certificate</option>
+                <option>Master Degree</option>
+              </select>
+            </div>
+            {/* category */}
+            <div>
+              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Category</label>
+              <select
+                value={form.category}
+                onChange={e => setForm(f => ({ ...f, category: e.target.value }))}
+                className={SELECT_CLASS}
+              >
+                {['Technology', 'Marketing', 'Design', 'MBA', 'Finance', 'Other'].map(c => (
+                  <option key={c}>{c}</option>
+                ))}
+              </select>
+            </div>
+            {/* level */}
+            <div>
+              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Level</label>
+              <select
+                value={form.level}
+                onChange={e => setForm(f => ({ ...f, level: e.target.value }))}
+                className={SELECT_CLASS}
+              >
+                {['Beginner', 'Intermediate', 'Advanced', 'All Levels'].map(l => (
+                  <option key={l}>{l}</option>
+                ))}
+              </select>
+            </div>
+            {/* status */}
+            <div>
+              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Status</label>
+              <select
+                value={form.status}
+                onChange={e => setForm(f => ({ ...f, status: e.target.value }))}
+                className={SELECT_CLASS}
+              >
+                <option>Draft</option>
+                <option>Published</option>
+                <option>Archived</option>
+              </select>
+            </div>
+            {/* image */}
+            <div>
+              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Thumbnail Image URL</label>
+              <input
+                value={form.image}
+                onChange={e => setForm(f => ({ ...f, image: e.target.value }))}
+                placeholder="https://..."
+                className={INPUT_CLASS}
+              />
+            </div>
+          </div>
+          {/* description */}
+          <div>
+            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Description</label>
+            <textarea
+              value={form.description}
+              onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
+              placeholder="Enter course description..."
+              rows={4}
+              className={`${INPUT_CLASS} resize-none`}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* ── Card B: Pricing ──────────────────────────────────────── */}
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+        <h2 className="text-base font-bold text-gray-900 mb-5">💰 Pricing</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+          {/* sellingPrice */}
+          <div>
+            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
+              Selling Price <span className="text-red-400">*</span>
+            </label>
+            <div className="relative">
+              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 font-medium">₹</span>
+              <input
+                type="number"
+                value={form.sellingPrice}
+                onChange={e => setForm(f => ({ ...f, sellingPrice: e.target.value }))}
+                placeholder="29999"
+                className={`${INPUT_CLASS} pl-8`}
+              />
+            </div>
+          </div>
+          {/* originalPrice */}
+          <div>
+            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Original Price</label>
+            <div className="relative">
+              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 font-medium">₹</span>
+              <input
+                type="number"
+                value={form.originalPrice}
+                onChange={e => setForm(f => ({ ...f, originalPrice: e.target.value }))}
+                placeholder="49999"
+                className={`${INPUT_CLASS} pl-8`}
+              />
+            </div>
+          </div>
+        </div>
+        {/* Discount badge */}
+        {discountPct !== null && (
+          <div className="mt-3">
+            <span className="inline-flex items-center gap-1.5 bg-green-100 text-green-700 text-xs font-bold px-3 py-1.5 rounded-full">
+              {discountPct}% off
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* ── Card C: Modules & Content ───────────────────────────── */}
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+        <h2 className="text-base font-bold text-gray-900 mb-5">🔨 Modules & Content</h2>
+
+        {/* Add module input + button */}
+        <div className="flex gap-3 mb-4">
+          <input
+            id="new-module-input"
+            placeholder="New module title..."
+            onKeyDown={e => {
+              if (e.key === 'Enter') {
+                const val = e.target.value.trim();
+                if (val) {
+                  setModules(m => [...m, { id: `mod-${Date.now()}`, title: val, lessons: [] }]);
+                  e.target.value = '';
+                }
+              }
+            }}
+            className={`${INPUT_CLASS} flex-1`}
+          />
           <button
-            onClick={handleSave}
-            disabled={saving || saved}
-            className={`flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-xl transition-all ${
-              saved
-                ? 'bg-green-500 text-white'
-                : 'bg-brand-500 hover:bg-brand-600 text-white hover:shadow-md'
-            }`}
+            onClick={() => {
+              const input = document.getElementById('new-module-input');
+              const val = input.value.trim();
+              if (val) {
+                setModules(m => [...m, { id: `mod-${Date.now()}`, title: val, lessons: [] }]);
+                input.value = '';
+              }
+            }}
+            className="flex items-center gap-2 bg-violet-600 hover:bg-violet-700 text-white rounded-xl px-4 py-2.5 text-sm font-medium transition-colors shrink-0"
           >
-            {saved ? <><CheckCircle size={15} /> Saved!</> : saving ? 'Saving...' : <><Save size={15} /> Save Course</>}
+            <Plus size={15} /> Add Module
           </button>
         </div>
-      </header>
 
-      <div className="flex h-[calc(100vh-64px)]">
-        {/* Left: Curriculum */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-6">
-          {/* Stats bar */}
-          <div className="grid grid-cols-3 gap-4 mb-6">
-            {[
-              { label: 'Modules', value: modules.length, icon: Layers, color: 'text-blue-500 bg-blue-50' },
-              { label: 'Lessons', value: totalLessons, icon: PlayCircle, color: 'text-purple-500 bg-purple-50' },
-              { label: 'Free Previews', value: modules.reduce((s, m) => s + m.lessons.filter(l => l.preview).length, 0), icon: Eye, color: 'text-green-500 bg-green-50' },
-            ].map(({ label, value, icon: Icon, color }) => (
-              <div key={label} className="card p-4 flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-xl ${color} flex items-center justify-center`}><Icon size={18} /></div>
-                <div>
-                  <div className="font-display font-bold text-xl text-gray-900">{value}</div>
-                  <div className="text-xs text-gray-400">{label}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Curriculum heading */}
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="font-display font-bold text-gray-900">Curriculum</h2>
-            <span className="text-xs text-gray-400">Click titles to edit</span>
-          </div>
-
-          {/* Modules */}
-          <div className="space-y-3">
-            {modules.map((mod, idx) => (
+        {/* Modules list */}
+        <div className="space-y-3">
+          {modules.length === 0 ? (
+            <p className="text-sm text-gray-400 text-center py-8 italic">No modules yet. Add your first module above.</p>
+          ) : (
+            modules.map((mod, idx) => (
               <ModuleBlock
                 key={mod.id}
                 module={mod}
@@ -507,53 +532,36 @@ export default function CourseBuilder() {
                 onUpdateLesson={updateLesson}
                 onDeleteLesson={deleteLesson}
               />
-            ))}
-          </div>
-
-          <button
-            onClick={addModule}
-            className="mt-4 w-full flex items-center justify-center gap-2 py-3 rounded-2xl border-2 border-dashed border-gray-300 text-gray-500 hover:border-brand-400 hover:text-brand-500 hover:bg-brand-50/30 transition-all font-medium text-sm"
-          >
-            <Plus size={16} /> Add Module
-          </button>
+            ))
+          )}
         </div>
+      </div>
 
-        {/* Right: Settings panel */}
-        <aside className="w-80 bg-white border-l border-gray-100 flex flex-col overflow-hidden shrink-0">
-          {/* Panel tabs */}
-          <div className="flex border-b border-gray-100 px-2 pt-2">
-            {panels.map(({ id, label, icon: Icon }) => (
-              <button
-                key={id}
-                onClick={() => setActivePanel(id)}
-                className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 text-sm font-medium rounded-t-lg transition-all ${
-                  activePanel === id
-                    ? 'text-brand-600 bg-brand-50 border-b-2 border-brand-500'
-                    : 'text-gray-500 hover:text-gray-700'
-                }`}
-              >
-                <Icon size={14} /> {label}
-              </button>
-            ))}
-          </div>
-
-          {/* Panel content */}
-          <div className="flex-1 overflow-y-auto p-4">
-            {activePanel === 'info' && <CourseInfoPanel form={form} setForm={setForm} />}
-            {activePanel === 'pricing' && <PricingPanel form={form} setForm={setForm} />}
-            {activePanel === 'media' && <MediaPanel form={form} setForm={setForm} />}
-          </div>
-
-          {/* Tips */}
-          <div className="p-4 border-t border-gray-100">
-            <div className="bg-brand-50 rounded-xl p-3 flex gap-2">
-              <AlertCircle size={14} className="text-brand-500 mt-0.5 shrink-0" />
-              <p className="text-xs text-brand-700">
-                Click any module or lesson title to edit it inline. Use the <Eye size={10} className="inline" /> icon to mark lessons as free previews.
-              </p>
-            </div>
-          </div>
-        </aside>
+      {/* ── Bottom Save Bar ─────────────────────────────────────── */}
+      <div className="flex items-center justify-end gap-3 pb-4">
+        <Link
+          to="/admin/courses"
+          className="px-5 py-2.5 text-sm font-medium text-gray-500 hover:text-gray-700 rounded-xl hover:bg-gray-100 transition-all"
+        >
+          Cancel
+        </Link>
+        <button
+          onClick={handleSave}
+          disabled={saving || saved}
+          className={`flex items-center gap-2 rounded-xl px-6 py-2.5 text-sm font-medium transition-all ${
+            saved
+              ? 'bg-green-500 text-white'
+              : 'bg-violet-600 hover:bg-violet-700 text-white hover:shadow-md'
+          }`}
+        >
+          {saved ? (
+            <><CheckCircle size={15} /> Saved!</>
+          ) : saving ? (
+            'Saving...'
+          ) : (
+            <><Save size={15} /> Save Course</>
+          )}
+        </button>
       </div>
     </div>
   );

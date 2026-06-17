@@ -1,9 +1,10 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { BookOpen, ArrowRight } from "lucide-react";
 
 const courses = [
   {
+    id: 0,
     name: "Web Development",
     progress: 75,
     lessonsCompleted: 45,
@@ -14,6 +15,7 @@ const courses = [
     iconColor: "text-violet-500",
   },
   {
+    id: 1,
     name: "Data Science",
     progress: 45,
     lessonsCompleted: 27,
@@ -24,6 +26,7 @@ const courses = [
     iconColor: "text-emerald-500",
   },
   {
+    id: 2,
     name: "UI/UX Design",
     progress: 60,
     lessonsCompleted: 36,
@@ -34,6 +37,7 @@ const courses = [
     iconColor: "text-pink-500",
   },
   {
+    id: 3,
     name: "Cloud Computing",
     progress: 30,
     lessonsCompleted: 18,
@@ -46,6 +50,8 @@ const courses = [
 ];
 
 const MyCoursesSection = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -92,8 +98,8 @@ const MyCoursesSection = () => {
 
               {/* Continue Button */}
               <button
-                className="text-xs bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 px-2 py-1 rounded hover:bg-violet-200 dark:hover:bg-violet-900/50 transition-colors duration-200"
-                onClick={() => {}}
+                className="text-xs font-medium px-3 py-1.5 rounded-lg transition-all bg-white/30 dark:bg-white/10 backdrop-blur-md border border-white/40 dark:border-white/20 text-violet-700 dark:text-violet-300 hover:bg-white/50 dark:hover:bg-white/20 shadow-sm"
+                onClick={() => navigate(`/student/courses/${course.id}/lecture`)}
               >
                 Continue
               </button>

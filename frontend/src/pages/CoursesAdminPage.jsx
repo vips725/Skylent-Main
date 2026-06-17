@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import { Layers, Users, Star, Search, Plus, Eye, Pencil, Trash2, X, Clock, BookOpen } from "lucide-react";
 
 const dummyCourses = [
@@ -175,29 +175,13 @@ const dummyCourses = [
   },
 ];
 
-const EMPTY_FORM = {
-  title: "",
-  category: "",
-  instructor: "",
-  duration: "",
-  price: "",
-  level: "",
-  rating: "",
-  students: "",
-  image: "",
-  programType: "Certificate",
-  badge: "",
-};
-
 export default function CoursesAdminPage() {
+  const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [showFormModal, setShowFormModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
-  const [editingCourse, setEditingCourse] = useState(null);
   const [viewCourse, setViewCourse] = useState(null);
-  const [form, setForm] = useState(EMPTY_FORM);
 
   // Keep API fetch as comment/wrapped in fallback
   useEffect(() => {
@@ -228,27 +212,11 @@ export default function CoursesAdminPage() {
   };
 
   const handleOpenAdd = () => {
-    setEditingCourse(null);
-    setForm(EMPTY_FORM);
-    setShowFormModal(true);
+    navigate('/admin/courses/new');
   };
 
   const handleOpenEdit = (course) => {
-    setEditingCourse(course);
-    setForm({
-      title: course.title || "",
-      category: course.category || "",
-      instructor: course.instructor || "",
-      duration: course.duration || "",
-      price: course.price || "",
-      level: course.level || "",
-      rating: course.rating || "",
-      students: course.students || "",
-      image: course.image || "",
-      programType: course.programType || "Certificate",
-      badge: course.badge || "",
-    });
-    setShowFormModal(true);
+    navigate(`/admin/courses/${course.id}/edit`);
   };
 
   const handleOpenView = (course) => {
@@ -256,36 +224,10 @@ export default function CoursesAdminPage() {
     setShowViewModal(true);
   };
 
-  const handleSave = () => {
-    const payload = {
-      ...form,
-      price: Number(form.price),
-      rating: Number(form.rating),
-      students: Number(form.students),
-    };
-    if (editingCourse) {
-      setCourses((prev) =>
-        prev.map((c) => (c.id === editingCourse.id ? { ...c, ...payload } : c))
-      );
-    } else {
-      const newCourse = { ...payload, id: Date.now() };
-      setCourses((prev) => [...prev, newCourse]);
-    }
-    setShowFormModal(false);
-    setForm(EMPTY_FORM);
-    setEditingCourse(null);
-  };
-
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this course?")) {
       setCourses((prev) => prev.filter((c) => c.id !== id));
     }
-  };
-
-  const handleCancelForm = () => {
-    setShowFormModal(false);
-    setForm(EMPTY_FORM);
-    setEditingCourse(null);
   };
 
   return (
@@ -465,178 +407,6 @@ export default function CoursesAdminPage() {
           </div>
         )}
       </div>
-
-      {/* Add/Edit Course Modal */}
-      {showFormModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div
-            className="absolute inset-0 bg-gray-900/30 backdrop-blur-sm"
-            onClick={handleCancelForm}
-          />
-          <div className="relative bg-white/95 backdrop-blur-xl border border-white/50 rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-            {/* Modal Header */}
-            <div className="flex items-center justify-between p-5 border-b border-gray-200">
-              <h2 className="text-base font-semibold text-gray-900">
-                {editingCourse ? "Edit Course" : "Add New Course"}
-              </h2>
-              <button
-                onClick={handleCancelForm}
-                className="p-1.5 rounded-lg text-gray-500 hover:text-gray-800 hover:bg-gray-100 transition-colors"
-              >
-                <X size={18} />
-              </button>
-            </div>
-
-            {/* Modal Body */}
-            <div className="p-5 space-y-4">
-              <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1.5">Course Title</label>
-                <input
-                  type="text"
-                  value={form.title}
-                  onChange={(e) => setForm({ ...form, title: e.target.value })}
-                  placeholder="e.g. Full-Stack Web Development"
-                  className="w-full px-3.5 py-2.5 bg-gray-50/80 border border-gray-300 text-gray-900 placeholder-gray-500 rounded-xl text-sm focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1.5">Category</label>
-                  <input
-                    type="text"
-                    value={form.category}
-                    onChange={(e) => setForm({ ...form, category: e.target.value })}
-                    placeholder="e.g. Technology"
-                    className="w-full px-3.5 py-2.5 bg-gray-50/80 border border-gray-300 text-gray-900 placeholder-gray-500 rounded-xl text-sm focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1.5">Instructor</label>
-                  <input
-                    type="text"
-                    value={form.instructor}
-                    onChange={(e) => setForm({ ...form, instructor: e.target.value })}
-                    placeholder="e.g. Priya Sharma"
-                    className="w-full px-3.5 py-2.5 bg-gray-50/80 border border-gray-300 text-gray-900 placeholder-gray-500 rounded-xl text-sm focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1.5">Duration</label>
-                  <input
-                    type="text"
-                    value={form.duration}
-                    onChange={(e) => setForm({ ...form, duration: e.target.value })}
-                    placeholder="e.g. 42 hours"
-                    className="w-full px-3.5 py-2.5 bg-gray-50/80 border border-gray-300 text-gray-900 placeholder-gray-500 rounded-xl text-sm focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1.5">Level</label>
-                  <input
-                    type="text"
-                    value={form.level}
-                    onChange={(e) => setForm({ ...form, level: e.target.value })}
-                    placeholder="e.g. Beginner"
-                    className="w-full px-3.5 py-2.5 bg-gray-50/80 border border-gray-300 text-gray-900 placeholder-gray-500 rounded-xl text-sm focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1.5">Price (₹)</label>
-                  <input
-                    type="number"
-                    value={form.price}
-                    onChange={(e) => setForm({ ...form, price: e.target.value })}
-                    placeholder="e.g. 4999"
-                    className="w-full px-3.5 py-2.5 bg-gray-50/80 border border-gray-300 text-gray-900 placeholder-gray-500 rounded-xl text-sm focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1.5">Rating (0–5)</label>
-                  <input
-                    type="number"
-                    step="0.1"
-                    min="0"
-                    max="5"
-                    value={form.rating}
-                    onChange={(e) => setForm({ ...form, rating: e.target.value })}
-                    placeholder="e.g. 4.8"
-                    className="w-full px-3.5 py-2.5 bg-gray-50/80 border border-gray-300 text-gray-900 placeholder-gray-500 rounded-xl text-sm focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1.5">Students</label>
-                  <input
-                    type="number"
-                    value={form.students}
-                    onChange={(e) => setForm({ ...form, students: e.target.value })}
-                    placeholder="e.g. 12450"
-                    className="w-full px-3.5 py-2.5 bg-gray-50/80 border border-gray-300 text-gray-900 placeholder-gray-500 rounded-xl text-sm focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1.5">Badge</label>
-                  <input
-                    type="text"
-                    value={form.badge}
-                    onChange={(e) => setForm({ ...form, badge: e.target.value })}
-                    placeholder="e.g. Bestseller"
-                    className="w-full px-3.5 py-2.5 bg-gray-50/80 border border-gray-300 text-gray-900 placeholder-gray-500 rounded-xl text-sm focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1.5">Image URL</label>
-                <input
-                  type="text"
-                  value={form.image}
-                  onChange={(e) => setForm({ ...form, image: e.target.value })}
-                  placeholder="https://images.unsplash.com/..."
-                  className="w-full px-3.5 py-2.5 bg-gray-50/80 border border-gray-300 text-gray-900 placeholder-gray-500 rounded-xl text-sm focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1.5">Program Type</label>
-                <select
-                  value={form.programType}
-                  onChange={(e) => setForm({ ...form, programType: e.target.value })}
-                  className="w-full px-3.5 py-2.5 bg-gray-50/80 border border-gray-300 text-gray-900 rounded-xl text-sm focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500/30"
-                >
-                  <option value="Certificate">Certificate</option>
-                  <option value="Master Degree">Master Degree</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Modal Footer */}
-            <div className="flex items-center gap-3 p-5 border-t border-gray-200">
-              <button
-                onClick={handleSave}
-                className="flex-1 py-2.5 bg-violet-600 hover:bg-violet-700 text-white rounded-xl text-sm font-medium transition-colors"
-              >
-                {editingCourse ? "Save Changes" : "Add Course"}
-              </button>
-              <button
-                onClick={handleCancelForm}
-                className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-800 border border-gray-200 rounded-xl text-sm font-medium transition-colors"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* View Course Modal */}
       {showViewModal && viewCourse && (

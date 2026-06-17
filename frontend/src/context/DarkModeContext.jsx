@@ -15,12 +15,23 @@ function getInitialDarkMode() {
 }
 
 export function DarkModeProvider({ children }) {
-  const [isDark, setIsDark] = useState(getInitialDarkMode);
+  const [isDark, setIsDark] = useState(() => {
+    const initial = getInitialDarkMode();
+    if (initial) {
+      document.documentElement.classList.add('dark');
+    }
+    return initial;
+  });
 
   const toggleDark = () => {
     setIsDark((prev) => {
       const next = !prev;
       localStorage.setItem("student-dark-mode", String(next));
+      if (next) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
       return next;
     });
   };
