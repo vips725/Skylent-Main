@@ -21,7 +21,12 @@ export default function UsersPage() {
     axios
       .get("/api/admin/users")
       .then((r) => setUsers(r.data.users || []))
-      .catch(() => setUsers([]))
+      .catch(() => setUsers([
+  { id: 'user_1', name: 'Skylent Admin', email: 'admin@skylentglobal.com', role: 'admin', enrolledCourses: [], createdAt: '2024-01-15', completion: 0, streak: 0, status: 'active' },
+  { id: 'student_1', name: 'Rahul Sharma', email: 'rahul@example.com', role: 'student', enrolledCourses: ['101', '102'], createdAt: '2024-03-10', completion: 85, streak: 12, status: 'active' },
+  { id: 'student_2', name: 'Priya Patel', email: 'priya@example.com', role: 'student', enrolledCourses: ['103'], createdAt: '2024-04-22', completion: 62, streak: 5, status: 'active' },
+  { id: 'student_3', name: 'Amit Kumar', email: 'amit@example.com', role: 'student', enrolledCourses: ['101', '103'], createdAt: '2024-02-18', completion: 45, streak: 3, status: 'inactive' },
+]))
       .finally(() => setLoading(false));
   }, []);
 
@@ -70,7 +75,7 @@ export default function UsersPage() {
         <div className="flex items-center justify-between p-0.5">
           <div>
             <span className="text-sm font-bold block text-stone-800">👥 Users</span>
-            <span className="text-xs block text-stone-500">
+            <span className="text-xs block text-stone-700">
               Manage platform users and roles
             </span>
           </div>
@@ -80,16 +85,16 @@ export default function UsersPage() {
       {/* Search */}
       <div className="flex items-center gap-4 px-1">
         <div className="relative flex-1 max-w-md">
-          <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
+          <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-600" />
           <input
             type="text"
             placeholder="Search by name or email..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-white/30 rounded-xl bg-white/60 backdrop-blur-md text-sm text-stone-800 placeholder-stone-400 focus:outline-none focus:border-violet-400 focus:ring-1 focus:ring-violet-200 transition"
+            className="w-full pl-10 pr-4 py-2 border border-white/30 rounded-xl bg-white/60 backdrop-blur-md text-sm text-stone-800 placeholder-stone-600 focus:outline-none focus:border-violet-400 focus:ring-1 focus:ring-violet-200 transition"
           />
         </div>
-        <div className="text-sm text-stone-500">
+        <div className="text-sm text-stone-700">
           Total:{" "}
           <span className="font-semibold text-stone-800">{filtered.length}</span>
         </div>
@@ -101,7 +106,7 @@ export default function UsersPage() {
         <div className="absolute inset-0 bg-gradient-to-br from-white/30 via-transparent to-stone-100/20 pointer-events-none" />
 
         {loading ? (
-          <div className="relative p-10 text-center text-stone-500">
+          <div className="relative p-10 text-center text-stone-700">
             <div className="w-6 h-6 border-2 border-stone-300 border-t-violet-500 rounded-full animate-spin mx-auto mb-3" />
             Loading users...
           </div>
@@ -112,19 +117,19 @@ export default function UsersPage() {
                 <tr className="border-b border-white/30 bg-white/30 backdrop-blur-md">
                   <th className="text-left px-4 py-3.5 font-semibold text-stone-600">
                     <span className="inline-flex items-center gap-1.5">
-                      <FiUser className="text-stone-400" size={14} />
+                      <FiUser className="text-stone-600" size={14} />
                       User
                     </span>
                   </th>
                   <th className="text-left px-4 py-3.5 font-semibold text-stone-600 whitespace-nowrap">
                     <span className="inline-flex items-center gap-1.5">
-                      <FiCalendar className="text-stone-400" size={14} />
+                      <FiCalendar className="text-stone-600" size={14} />
                       Joined
                     </span>
                   </th>
                   <th className="text-left px-4 py-3.5 font-semibold text-stone-600">
                     <span className="inline-flex items-center gap-1.5">
-                      <FiBookOpen className="text-stone-400" size={14} />
+                      <FiBookOpen className="text-stone-600" size={14} />
                       Courses
                     </span>
                   </th>
@@ -133,13 +138,13 @@ export default function UsersPage() {
                   </th>
                   <th className="text-left px-4 py-3.5 font-semibold text-stone-600">
                     <span className="inline-flex items-center gap-1.5">
-                      <FiZap className="text-stone-400" size={14} />
+                      <FiZap className="text-stone-600" size={14} />
                       Streak
                     </span>
                   </th>
                   <th className="text-left px-4 py-3.5 font-semibold text-stone-600">
                     <span className="inline-flex items-center gap-1.5">
-                      <FiActivity className="text-stone-400" size={14} />
+                      <FiActivity className="text-stone-600" size={14} />
                       Status
                     </span>
                   </th>
@@ -166,14 +171,14 @@ export default function UsersPage() {
                         </div>
                         <div>
                           <p className="font-medium text-stone-800">{u.name}</p>
-                          <p className="text-xs text-stone-500">{u.email}</p>
+                          <p className="text-xs text-stone-700">{u.email}</p>
                           <div className="flex items-center gap-1 mt-0.5">
                             <span
                               className={`inline-block w-1.5 h-1.5 rounded-full ${roleDot(
                                 u.role
                               )}`}
                             />
-                            <span className="text-[10px] text-stone-400 capitalize">
+                            <span className="text-[10px] text-stone-600 capitalize">
                               {u.role}
                             </span>
                           </div>
@@ -192,7 +197,7 @@ export default function UsersPage() {
                     <td className="px-4 py-3.5">
                       <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-700 text-xs font-semibold border border-blue-500/15">
                         {u.enrolledCourses?.length ?? 0}
-                        <span className="text-blue-400 font-normal">courses</span>
+                        <span className="text-blue-600 font-normal">courses</span>
                       </span>
                     </td>
 
@@ -225,7 +230,7 @@ export default function UsersPage() {
                           size={15}
                         />
                         <span className="font-semibold">{u.streak ?? 0}</span>
-                        <span className="text-stone-400 text-xs">days</span>
+                        <span className="text-stone-600 text-xs">days</span>
                       </span>
                     </td>
 
@@ -251,14 +256,14 @@ export default function UsersPage() {
                     <td className="px-4 py-3.5">
                       <div className="flex items-center gap-2">
                         <button
-                          className="p-1.5 rounded-lg text-stone-400 hover:text-blue-600 hover:bg-blue-500/10 transition"
+                          className="p-1.5 rounded-lg text-stone-600 hover:text-blue-600 hover:bg-blue-500/10 transition"
                           onClick={() => alert(`Edit user: ${u.name}\n(Not yet implemented)`)}
                           title="Edit"
                         >
                           <FiEdit2 size={15} />
                         </button>
                         <button
-                          className="p-1.5 rounded-lg text-stone-400 hover:text-red-600 hover:bg-red-500/10 transition"
+                          className="p-1.5 rounded-lg text-stone-600 hover:text-red-600 hover:bg-red-500/10 transition"
                           onClick={() => handleDelete(u.id)}
                           title="Delete"
                         >
@@ -274,7 +279,7 @@ export default function UsersPage() {
         )}
 
         {filtered.length === 0 && !loading && (
-          <div className="relative p-10 text-center text-stone-400">
+          <div className="relative p-10 text-center text-stone-600">
             <FiUsers className="mx-auto mb-2 text-2xl" />
             No users found.
           </div>

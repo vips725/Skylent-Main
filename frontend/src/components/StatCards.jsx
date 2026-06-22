@@ -35,9 +35,9 @@ export const StatCards = () => {
         />
       </div>
 
-      {/* Dark glassmorphism stat cards */}
+      {/* Glassmorphism stat cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <DarkCard
+        <GlassCard
           title="Learning Streak"
           value="12 days"
           change="+3 days"
@@ -46,7 +46,7 @@ export const StatCards = () => {
           trend="up"
         />
 
-        <DarkCard
+        <GlassCard
           title="Course Status"
           value="8 Active"
           change="+2 new"
@@ -55,7 +55,7 @@ export const StatCards = () => {
           trend="up"
         />
 
-        <DarkCard
+        <GlassCard
           title="Completion Rate"
           value="76%"
           change="+4.2%"
@@ -76,11 +76,11 @@ const Card = ({ title, value, change, subtitle, icon: Icon, trend }) => {
         <div className="p-2 rounded-lg bg-stone-100">
           <Icon className="text-stone-600" />
         </div>
-        <h3 className="text-sm">{title}</h3>
+        <h3 className="text-sm text-stone-700">{title}</h3>
       </div>
 
       {/* Value */}
-      <p className="text-2xl font-semibold mt-3">{value}</p>
+      <p className="text-2xl font-semibold mt-3 text-stone-900">{value}</p>
 
       {/* Bottom row */}
       <div className="mt-4 flex items-center justify-between">
@@ -100,7 +100,7 @@ const Card = ({ title, value, change, subtitle, icon: Icon, trend }) => {
   );
 };
 
-const DarkCard = ({ title, value, change, subtitle, icon: Icon, trend }) => {
+const GlassCard = ({ title, value, change, subtitle, icon: Icon, trend }) => {
   return (
     <div className="p-5 rounded-xl bg-white/70 backdrop-blur-md border border-white/40 shadow-lg">
       {/* Top row: icon + title */}
@@ -108,11 +108,11 @@ const DarkCard = ({ title, value, change, subtitle, icon: Icon, trend }) => {
         <div className="p-2 rounded-lg bg-violet-100">
           <Icon className="text-violet-600" size={16} />
         </div>
-        <h3 className="text-sm">{title}</h3>
+        <h3 className="text-sm text-stone-800">{title}</h3>
       </div>
 
       {/* Value */}
-      <p className="text-2xl font-semibold mt-3 text-gray-900">{value}</p>
+      <p className="text-2xl font-semibold mt-3 text-stone-900">{value}</p>
 
       {/* Bottom row */}
       <div className="mt-4 flex items-center justify-between">

@@ -71,3 +71,12 @@
   background-color: #f0f9ff;
   background-image: radial-gradient(at 40% 20%, #eff6ff 0px, transparent 50%), radial-gradient(at 80% 0%, #dbeafe 0px, transparent 50%), radial-gradient(at 0% 50%, #bfdbfe 0px, transparent 50%);
 }
+
+/* Glassy shine animation for dark mode account area */
+@keyframes shine {
+  0% { transform: translateX(-100%) skewX(-12deg); }
+  100% { transform: translateX(200%) skewX(-12deg); }
+}
+.animate-shine {
+  animation: shine 3s ease-in-out infinite;
+}

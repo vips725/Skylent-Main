@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import {
   Play, Lock, CheckCircle, ChevronDown, ChevronUp,
@@ -78,20 +78,42 @@ export default function CourseLecture() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  // Active lesson index in the flat list; default to first lesson
   const flatList = buildFlatList(SAMPLE_CURRICULUM);
+
+  // Initially unlocked: all preview lessons + the very first lesson
+  const getInitialUnlocked = () => {
+    const unlocked = new Set();
+    flatList.forEach((lesson, idx) => {
+      if (lesson.preview || idx === 0) unlocked.add(idx);
+    });
+    return unlocked;
+  };
+
   const [activeIndex, setActiveIndex] = useState(0);
+  const [completedLessons, setCompletedLessons] = useState(new Set());
+  const [watchedThisSession, setWatchedThisSession] = useState(false);
+  const [unlockedLessons, setUnlockedLessons] = useState(getInitialUnlocked);
+  const [showCompletionOverlay, setShowCompletionOverlay] = useState(false);
+  const videoRef = useRef(null);
+
   const [expandedModules, setExpandedModules] = useState(
     SAMPLE_CURRICULUM.reduce((acc, _, i) => ({ ...acc, [i]: i === 0 }), {})
   );
 
   const activeLesson = flatList[activeIndex];
 
+  // Reset watchedThisSession and overlay when switching lessons
+  useEffect(() => {
+    setWatchedThisSession(false);
+    setShowCompletionOverlay(false);
+  }, [activeIndex]);
+
   const toggleModule = (idx) => {
     setExpandedModules(prev => ({ ...prev, [idx]: !prev[idx] }));
   };
 
   const goToLesson = (index) => {
+    if (!unlockedLessons.has(index)) return;
     setActiveIndex(index);
     // Ensure the module containing this lesson is expanded
     const modIdx = flatList[index].modIdx;
@@ -102,13 +124,49 @@ export default function CourseLecture() {
     });
   };
 
+  const handleVideoEnd = () => {
+    setCompletedLessons(prev => {
+      const next = new Set(prev);
+      next.add(activeIndex);
+      return next;
+    });
+    setWatchedThisSession(true);
+    setShowCompletionOverlay(true);
+    // Unlock next lesson
+    const nextIdx = activeIndex + 1;
+    if (nextIdx < flatList.length) {
+      setUnlockedLessons(prev => {
+        const next = new Set(prev);
+        next.add(nextIdx);
+        return next;
+      });
+    }
+  };
+
   const handlePrev = () => {
     if (activeIndex > 0) goToLesson(activeIndex - 1);
   };
 
   const handleNext = () => {
-    if (activeIndex < flatList.length - 1) goToLesson(activeIndex + 1);
+    const nextIdx = activeIndex + 1;
+    if (nextIdx < flatList.length && unlockedLessons.has(nextIdx)) {
+      goToLesson(nextIdx);
+    }
   };
+
+  // Derive video src for current lesson
+  const videoSrc =
+    activeLesson?.type === 'video'
+      ? `https://imgsrc.pub/video/1280x720?duration=2&text=${encodeURIComponent(activeLesson.title)}`
+      : null;
+
+  // Check if Next button should be disabled
+  const isLastLesson = activeIndex === flatList.length - 1;
+  const currentIsVideo = activeLesson?.type === 'video';
+  const currentCompleted = completedLessons.has(activeIndex);
+  const isNextLocked = !unlockedLessons.has(activeIndex + 1);
+  const nextDisabled =
+    isLastLesson || (currentIsVideo && !currentCompleted) || isNextLocked;
 
   return (
     <div className="min-h-screen bg-white dark:bg-stone-900">
@@ -136,20 +194,44 @@ export default function CourseLecture() {
           <div className="space-y-4">
             {/* Video player */}
             <div className="rounded-xl overflow-hidden shadow-lg border border-gray-100 dark:border-stone-700 bg-black">
-              <video
-                key={activeIndex}
-                controls
-                autoPlay={false}
-                poster="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&h=675&fit=crop"
-                className="w-full aspect-video"
-              >
-                <source
-                  src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
-                  type="video/mp4"
-                />
-                Your browser does not support the video tag.
-              </video>
+              {activeLesson?.type === 'video' ? (
+                <video
+                  ref={videoRef}
+                  key={activeIndex}
+                  controls
+                  autoPlay={false}
+                  onEnded={handleVideoEnd}
+                  poster="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1200&h=675&fit=crop"
+                  className="w-full aspect-video"
+                >
+                  {videoSrc && <source src={videoSrc} type="video/mp4" />}
+                  Your browser does not support the video tag.
+                </video>
+              ) : (
+                <div className="w-full aspect-video flex items-center justify-center bg-stone-800 text-stone-400 text-sm">
+                  No video for this lesson type
+                </div>
+              )}
             </div>
+
+            {/* Video completion overlay */}
+            {showCompletionOverlay && activeLesson?.type === 'video' && (
+              <div className="bg-brand-500/10 border border-brand-200 rounded-xl p-4 text-center mt-4">
+                <p className="text-brand-700 font-bold text-lg mb-2">🎉 New lesson unlocked!</p>
+                <button
+                  onClick={() => {
+                    const nextIdx = activeIndex + 1;
+                    if (nextIdx < flatList.length && unlockedLessons.has(nextIdx)) {
+                      goToLesson(nextIdx);
+                    }
+                  }}
+                  disabled={!unlockedLessons.has(activeIndex + 1)}
+                  className="btn-primary px-4 py-2 rounded-xl text-sm font-medium transition-all"
+                >
+                  Go to Next Lesson
+                </button>
+              </div>
+            )}
 
             {/* Lesson title + module badge */}
             <div className="bg-gray-50 dark:bg-stone-800 rounded-xl p-4 border border-gray-100 dark:border-stone-700">
@@ -180,9 +262,9 @@ export default function CourseLecture() {
               </button>
               <button
                 onClick={handleNext}
-                disabled={activeIndex === flatList.length - 1}
+                disabled={nextDisabled}
                 className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all border ${
-                  activeIndex === flatList.length - 1
+                  nextDisabled
                     ? 'border-gray-100 text-gray-300 dark:border-stone-700 dark:text-stone-300 cursor-not-allowed'
                     : 'border-brand-500 bg-brand-500 text-white hover:bg-brand-600 dark:hover:bg-brand-700'
                 }`}
@@ -242,7 +324,7 @@ export default function CourseLecture() {
                             l => l.modIdx === modIdx && l.lesIdx === lesIdx
                           );
                           const isActive = globalIdx === activeIndex;
-                          const isLocked = !lesson.preview;
+                          const isLocked = !unlockedLessons.has(globalIdx);
 
                           return (
                             <button

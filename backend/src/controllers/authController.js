@@ -2,7 +2,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const env = require("../config/constants");
-const { findUserById, findUserByUsername } = require("../data/store");
+const { findUserById, findUserByUsername, updateUserPassword } = require("../data/store");
 
 function buildUserResponse(user) {
   return {
@@ -85,8 +85,33 @@ function logout(req, res) {
   });
 }
 
+async function changePassword(req, res) {
+  try {
+    const { oldPassword, newPassword } = req.body;
+    const user = await findUserById(req.user.sub);
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    const isValidPassword = await bcrypt.compare(oldPassword, user.passwordHash);
+    if (!isValidPassword) {
+      return res.status(401).json({ success: false, message: "Current password is incorrect" });
+    }
+
+    const newPasswordHash = await bcrypt.hash(newPassword, 10);
+    await updateUserPassword(user.id, newPasswordHash);
+
+    return res.json({ success: true, message: "Password changed successfully" });
+  } catch (error) {
+    console.error("Password change failed:", error);
+    return res.status(500).json({ success: false, message: "Password change service is temporarily unavailable" });
+  }
+}
+
 module.exports = {
   login,
   me,
-  logout
+  logout,
+  changePassword
 };

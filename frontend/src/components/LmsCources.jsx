@@ -47,7 +47,7 @@ export const LmsCources = () => {
               type="category"
               dataKey="course"
               width={220}
-              tick={{ fontSize: 13 }}
+              tick={{ fontSize: 13, fill: '#4b5563' }}
             />
 
             <Tooltip />

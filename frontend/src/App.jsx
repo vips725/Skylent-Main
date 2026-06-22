@@ -21,11 +21,24 @@ import CoursesAdminPage from './pages/CoursesAdminPage';
 import CourseBuilder from './pages/CourseBuilder';
 import ReportsPage from './pages/ReportsPage';
 import EngagementPage from './pages/EngagementPage';
+import OrgLayout from './layouts/OrgLayout';
+import OrgDashboardPage from './pages/OrgDashboardPage';
+import OrgAnalyticsPage from './pages/OrgAnalyticsPage';
+import OrgStudentsPage from './pages/OrgStudentsPage';
+import OrgFacultyPage from './pages/OrgFacultyPage';
+import OrgBatchesPage from './pages/OrgBatchesPage';
+import OrgPlacementsPage from './pages/OrgPlacementsPage';
+import OrgReportsPage from './pages/OrgReportsPage';
+import OrgContactPage from './pages/OrgContactPage';
+import OrgAccountPage from './pages/OrgAccountPage';
+import OrgProfilePage from './pages/OrgProfilePage';
 import StudentLayout from './layouts/StudentLayout';
 import StudentRoute from './components/StudentRoute';
 import StudentCoursesPage from './pages/StudentCoursesPage';
 import CourseLecture from './pages/CourseLecture';
 import StudentDashboard from './components/StudentDashboard';
+import AdminProfilePage from './pages/AdminProfilePage';
+import AdminChangePasswordPage from './pages/AdminChangePasswordPage';
 import { DarkModeProvider } from './context/DarkModeContext';
 
 const noLayoutRoutes = ['/login', '/signup'];
@@ -80,6 +93,26 @@ export default function App() {
             <Route path="signup" element={<Signup />} />
           </Route>
 
+          {/* Organization routes */}
+          <Route path="/organization" element={
+            <ProtectedRoute>
+              <AdminRoute>
+                <OrgLayout />
+              </AdminRoute>
+            </ProtectedRoute>
+          }>
+            <Route index element={<OrgDashboardPage />} />
+            <Route path="analytics" element={<OrgAnalyticsPage />} />
+            <Route path="students" element={<OrgStudentsPage />} />
+            <Route path="faculty" element={<OrgFacultyPage />} />
+            <Route path="batches" element={<OrgBatchesPage />} />
+            <Route path="placements" element={<OrgPlacementsPage />} />
+            <Route path="reports" element={<OrgReportsPage />} />
+            <Route path="contact" element={<OrgContactPage />} />
+            <Route path="account" element={<OrgAccountPage />} />
+            <Route path="profile" element={<OrgProfilePage />} />
+          </Route>
+
           {/* Admin routes */}
           <Route path="/admin" element={
             <ProtectedRoute>
@@ -97,6 +130,8 @@ export default function App() {
             <Route path="courses/:id/edit" element={<CourseBuilder />} />
             <Route path="reports" element={<ReportsPage />} />
             <Route path="engagement" element={<EngagementPage />} />
+            <Route path="profile" element={<AdminProfilePage />} />
+            <Route path="change-password" element={<AdminChangePasswordPage />} />
           </Route>
 
           {/* Student routes */}

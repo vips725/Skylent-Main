@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useDarkMode } from "../context/DarkModeContext";
 import {
   FiHome,
   FiBookOpen,
@@ -8,6 +9,8 @@ import {
   FiArrowLeft,
   FiChevronDown,
   FiChevronUp,
+  FiSearch,
+  FiCommand,
 } from "react-icons/fi";
 
 const studentNav = [
@@ -18,6 +21,8 @@ const studentNav = [
 const StudentSidebar = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const { isDark } = useDarkMode();
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleLogout = () => {
     logout();
@@ -28,19 +33,57 @@ const StudentSidebar = () => {
     navigate("/");
   };
 
+  const handleNavClick = () => {
+    setSearchQuery("");
+  };
+
+  const filterItems = (items) => {
+    if (!searchQuery.trim()) return items;
+    const query = searchQuery.toLowerCase();
+    return items.filter(
+      (item) =>
+        item.title.toLowerCase().includes(query) ||
+        item.path.toLowerCase().includes(query)
+    );
+  };
+
+  const filteredStudentNav = filterItems(studentNav);
+
   return (
     <div className="bg-slate-100 dark:bg-stone-800 rounded-lg shadow pb-4 h-full">
       <div className="flex flex-col h-[calc(100vh-2rem)] overflow-y-auto scrollbar-none sticky top-4 p-4">
         {/* Account Toggle */}
         <div className="border-b mb-4 mt-2 pb-4 border-stone-300 dark:border-stone-700">
-          <button className="flex p-0.5 hover:bg-stone-200 dark:hover:bg-stone-700 rounded translate-colors relative gap-2 w-full items-center">
-            <img src="/svg.png" alt="User" className="w-8 h-8 text-sm" />
-            <div className="text-start mt-2">
-              <span className="text-sm font-semibold text-gray-900 dark:text-stone-100">{user?.username || user?.name || 'Student'}</span>
-            </div>
-            <FiChevronDown className="absolute right-2 top-1/2 translate-y-[calc(-50%+4px)] text-xs" />
-            <FiChevronUp className="absolute right-2 top-1/2 translate-y-[calc(-50%-4px)] text-xs" />
-          </button>
+          <div className="relative overflow-hidden rounded-lg dark:bg-white/5 dark:backdrop-blur-sm dark:border dark:border-white/10">
+            {isDark && (
+              <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute -inset-[100%] animate-shine bg-gradient-to-r from-transparent via-white/20 to-transparent transform skew-x-12" />
+              </div>
+            )}
+            <button className="flex p-0.5 hover:bg-stone-200 dark:hover:bg-stone-700 rounded translate-colors relative gap-2 w-full items-center">
+              <img src="/svg.png" alt="User" className="w-8 h-8 text-sm" />
+              <div className="text-start mt-2">
+                <span className="text-sm font-semibold text-gray-900 dark:text-stone-100">{user?.username || user?.name || 'Student'}</span>
+              </div>
+              <FiChevronDown className="absolute right-2 top-1/2 translate-y-[calc(-50%+4px)] text-xs dark:text-stone-400" />
+              <FiChevronUp className="absolute right-2 top-1/2 translate-y-[calc(-50%-4px)] text-xs dark:text-stone-400" />
+            </button>
+          </div>
+        </div>
+
+        {/* Search Input */}
+        <div className="bg-stone-200 dark:bg-stone-700 mb-4 relative rounded flex items-center px-2 py-1.5 text-sm">
+          <FiSearch className="mr-2 dark:text-stone-400" />
+          <input
+            type="text"
+            placeholder="Search"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="bg-transparent outline-none flex-1 text-stone-900 dark:text-stone-100 placeholder-stone-500 dark:placeholder-stone-400 text-sm"
+          />
+          <span className="p-1 text-xs flex gap-0.5 items-center shadow bg-stone-50 dark:bg-stone-600 dark:text-stone-300 rounded absolute right-1.5 top-1/2 -translate-y-1/2">
+            <FiCommand />K
+          </span>
         </div>
 
         <div className="space-y-1">
@@ -48,8 +91,8 @@ const StudentSidebar = () => {
             OVERVIEW
           </h3>
 
-          {studentNav.map((item) => (
-            <RouteLink key={item.path} {...item} />
+          {filteredStudentNav.map((item) => (
+            <RouteLink key={item.path} {...item} onClick={handleNavClick} />
           ))}
 
           {/* SYSTEM SECTION */}
@@ -78,11 +121,12 @@ const StudentSidebar = () => {
   );
 };
 
-const RouteLink = ({ Icon, title, path }) => {
+const RouteLink = ({ Icon, title, path, onClick }) => {
   return (
     <NavLink
       to={path}
       end={false}
+      onClick={onClick}
       className={({ isActive }) =>
         `flex items-center justify-start gap-2 w-full rounded px-2 py-1.5 text-sm transition-[box-shadow,_background-color,_color] ${
           isActive

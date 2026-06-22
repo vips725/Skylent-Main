@@ -11,6 +11,7 @@ import {
   PieChart,
   Pie,
   Cell,
+  LabelList,
 } from "recharts";
 
 /* LINE CHART DATA */
@@ -92,6 +93,7 @@ export const ActivityGraph = () => {
                 outerRadius={85}
                 label
               >
+                <LabelList dataKey="value" fill="#1f2937" />
                 {pieData.map((entry, index) => (
                   <Cell key={index} fill={COLORS[index % COLORS.length]} />
                 ))}
