@@ -8,6 +8,7 @@ A complete full-stack web application for Skylent Global's edtech platform, with
 
 ## 📁 Project Structure
 
+
 ```
 skylent/
 ├── backend/          # Node.js + Express API
